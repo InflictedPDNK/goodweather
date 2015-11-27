@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Good Weather</string>
+    <string name="action_settings">Settings</string>
+    <string name="search_hint">Enter City, ZIP or coordinates</string>
+    <string name="empty_line2">Start looking up locations to add recents</string>
+    <string name="empty_line1">It\'s so empty here!</string>
+    <string name="recent_locations_text">Your recent locations</string>
+</resources>
