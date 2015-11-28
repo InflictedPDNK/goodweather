@@ -3,6 +3,7 @@ package org.pdnk.goodweather;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -27,8 +28,10 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
      * CUSTOMISABLE OPTIONS WHICH COULD GO TO APP's SETTINGS:
      */
 
-    final int OPT_MAX_HISTORY = 10;
-    final boolean OPT_STORE_HISTORY_FROM_FAVOURITES = false;
+    final static int OPT_MAX_HISTORY = 10;
+    final static boolean OPT_STORE_HISTORY_FROM_FAVOURITES = false;
+    final static boolean OPT_ENABLE_FINE_LOCATION = false;
+    final static boolean OPT_SUBMIT_GPS_SEARCH = false;
 
     /**
      * END OF OPTIONS
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     ContentManager<ILocation> contentHistory;
     ContentManager<ILocation> contentFavourites;
 
+    GPSManager locationGPSmgr;
 
     enum NavigationState {
         UNKNOWN,
@@ -57,11 +61,14 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
     private View refreshBtn;
     private View favBtn;
+    private android.support.v7.widget.SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
 
@@ -97,8 +104,14 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         contentFavourites = new ContentManager<>(this, CONTENT_MGR_FAVOURITES);
         contentFavourites.addObserver(this);
 
+        locationGPSmgr = new GPSManager(this);
+        locationGPSmgr.addObserver(this);
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);
+
+        //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+
     }
 
     private void onFavouritesBtnClick(View v)
@@ -117,20 +130,20 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     {
         getMenuInflater().inflate(R.menu.actionbar_menu, menu);
 
-        android.support.v7.widget.SearchView sv = (android.support.v7.widget.SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView = (android.support.v7.widget.SearchView) menu.findItem(R.id.action_search).getActionView();
 
-        sv.setIconifiedByDefault(true);
+        searchView.setIconifiedByDefault(true);
 
-        View plate = sv.findViewById(R.id.search_plate);
+        View plate = searchView.findViewById(R.id.search_plate);
         plate.setBackgroundResource(R.drawable.element_semi_transparent);
 
-        EditText searchEdit = (EditText) sv.findViewById(R.id.search_src_text);
+        EditText searchEdit = (EditText) searchView.findViewById(R.id.search_src_text);
         searchEdit.setHintTextColor(Color.DKGRAY);
         searchEdit.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.search_text_size));
         searchEdit.setFocusableInTouchMode(true);
         searchEdit.setFocusable(true);
 
-        sv.setOnQueryTextListener(new LocationSearchListener(contentHistory, sv));
+        searchView.setOnQueryTextListener(new LocationSearchListener(contentHistory, searchView));
 
         SpannableStringBuilder ssb = new SpannableStringBuilder("  " + getString(R.string.search_hint));
         int textSize = (int) (searchEdit.getTextSize() * 1.25);
@@ -142,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         searchEdit.setHint(ssb);
 
-        sv.setMaxWidth((int) (getResources().getDisplayMetrics().widthPixels * 0.7));
+        searchView.setMaxWidth((int) (getResources().getDisplayMetrics().widthPixels * 0.7));
 
         return true;
     }
@@ -152,11 +165,14 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     {
         if(item.getItemId() == R.id.action_location)
         {
+            item.setEnabled(false);
+            locationGPSmgr.requestCoordinates();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
 
     void initToolbar()
     {
@@ -312,10 +328,10 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     @Override
     public void update(Observable observable, Object data)
     {
-        ContentManager.UpdateTrait trait = (ContentManager.UpdateTrait) data;
 
-        if(trait.managerId == CONTENT_MGR_HISTORY )
+        if(observable == contentHistory)
         {
+            ContentManager.UpdateTrait trait = (ContentManager.UpdateTrait) data;
             switch (trait.action)
             {
                 case UPDATE:
@@ -326,10 +342,12 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                     setNavigationState(NavigationState.DETAILS, false);
                     break;
             }
+            updateButtonVisibility();
 
         }
-        else
+        else if(observable == contentFavourites)
         {
+            ContentManager.UpdateTrait trait = (ContentManager.UpdateTrait) data;
             switch (trait.action)
             {
                 case CLEAR:
@@ -347,9 +365,25 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                     break;
             }
 
+            updateButtonVisibility();
+        } else if(observable instanceof GPSManager)
+        {
+
+            findViewById(R.id.action_location).setEnabled(true);
+
+            if(data == null || ((String) data).isEmpty())
+            {
+                showNotification("Failed to obtain GPS coordinates");
+            }
+            else
+            {
+                searchView.setIconified(false);
+                searchView.setQuery((String) data, OPT_SUBMIT_GPS_SEARCH);
+            }
+
         }
 
-        updateButtonVisibility();
+
 
     }
 
@@ -375,5 +409,12 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         }
 
     }
+
+    void showNotification(String message)
+    {
+        Snackbar.make(getWindow().getDecorView(), message, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+    }
+
 
 }
