@@ -12,45 +12,44 @@ public class ContentManager<T> extends Observable
 {
     enum UpdateAction {
         UPDATE,
-        CLEAR
+        CLEAR,
+        SELECTEDITEM
     };
 
-    enum UpdateTarget {
-        HISTORY,
-        FAVOURITES,
-        ALL
-    }
+    LinkedList<T> content = new LinkedList<T>();
+    private int myId;
+    private int maxCount = 0;
 
-    LinkedList<T> history = new LinkedList<T>();
-    LinkedList<T> favourites = new LinkedList<T>();
-
-    final int MAX_HISTORY = 10;
+    T selectedLocation;
 
     class UpdateTrait extends Object
     {
         public UpdateAction action;
-        public UpdateTarget target;
+        public int managerId;
+        public T location;
 
-        public UpdateTrait(UpdateTarget target, UpdateAction action)
+        public UpdateTrait(int managerId, UpdateAction action, T location)
         {
-            this.target = target;
+            this.managerId = managerId;
             this.action = action;
+            this.location = location;
         }
     }
 
-    public ContentManager(Context ctx)
+    public ContentManager(Context ctx, int managerId)
     {
-
+        myId = managerId;
     }
 
-    public LinkedList<T> getHistoryList()
+    public ContentManager(Context ctx, int managerId, int maxCount)
     {
-        return history;
+        myId = managerId;
+        this.maxCount = maxCount;
     }
 
-    public LinkedList<T> getFavouritesList()
+    public LinkedList<T> getContent()
     {
-        return favourites;
+        return content;
     }
 
     private void loadLocalData()
@@ -58,21 +57,73 @@ public class ContentManager<T> extends Observable
 
     }
 
+    //test
     public  void createTestLocation(String incomingQuery)
     {
-       // if(T instanceof ILocation)
-        {
-            ILocation newLocation = WeatherLocation.createFromSearchQuery(incomingQuery);
 
-            if(history.size() > MAX_HISTORY)
-            {
-                history.removeLast();
-            }
-            history.addFirst((T)newLocation);
+        ILocation newLocation = WeatherLocation.createFromSearchQuery(incomingQuery);
 
-            setChanged();
-            notifyObservers(new UpdateTrait(UpdateTarget.HISTORY, UpdateAction.UPDATE));
+        addItem((T) newLocation);
 
-        }
+        setSelectedLocation((T) newLocation, false);
     }
+
+    public T getSelectedLocation()
+    {
+        return selectedLocation;
+    }
+
+    public void setSelectedLocation(T location, boolean reorder)
+    {
+        if(reorder && content.contains(location))
+        {
+            content.remove(location);
+            content.addFirst(location);
+            //setChanged();
+            //notifyObservers(new UpdateTrait(myId, UpdateAction.UPDATE, null));
+        }
+
+        selectedLocation = location;
+
+        setChanged();
+        notifyObservers(new UpdateTrait(myId, UpdateAction.SELECTEDITEM, selectedLocation));
+    }
+
+    public void addItem(T item)
+    {
+        if(maxCount > 0 && content.size() > maxCount)
+        {
+            content.removeLast();
+        }
+        content.addFirst(item);
+
+        setChanged();
+
+        notifyObservers(new UpdateTrait(myId, UpdateAction.UPDATE, item));
+    }
+
+    public boolean contains(T item)
+    {
+        return content.contains(item);
+    }
+
+    public void removeItem(T item)
+    {
+        if(item == selectedLocation)
+            selectedLocation = null;
+
+        content.remove(item);
+        setChanged();
+        notifyObservers(new UpdateTrait(myId, UpdateAction.UPDATE, null));
+    }
+
+    public void removeAll()
+    {
+        selectedLocation = null;
+
+        content.clear();
+        setChanged();
+        notifyObservers(new UpdateTrait(myId, UpdateAction.CLEAR, null));
+    }
+
 }

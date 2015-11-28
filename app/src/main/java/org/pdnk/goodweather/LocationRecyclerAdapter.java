@@ -7,17 +7,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.LinkedList;
-
 /**
  * Created by Inflicted on 27/11/2015.
  */
 public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecyclerAdapter.ViewHolder>
 {
-    LinkedList<ILocation> content;
-    public LocationRecyclerAdapter(LinkedList<ILocation> locationData)
+    ContentManager<ILocation> content;
+    boolean reoderOnSelect;
+
+    public LocationRecyclerAdapter(ContentManager<ILocation> content, boolean reoderOnSelect)
     {
-        this.content = locationData;
+        this.reoderOnSelect = reoderOnSelect;
+        this.content = content;
     }
 
     @Override
@@ -31,29 +32,31 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position)
     {
-        holder.updateUI(content.get(position));
-
-        /*
-        holder.mView.setOnClickListener(new View.OnClickListener()
+        holder.updateUI(content.getContent().get(position));
+        holder.removeBtn.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-             //   if (null != mListener)
-                {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-           //         mListener.onListFragmentInteraction(holder.mItem);
-                }
+                content.removeItem(holder.mItem);
             }
         });
-        */
+
+        holder.itemView.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                content.setSelectedLocation(holder.mItem, reoderOnSelect);
+            }
+        });
+
     }
 
     @Override
     public int getItemCount()
     {
-        return content.size();
+        return content.getContent().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -61,6 +64,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         ImageView image;
         TextView city;
         TextView temp;
+        View removeBtn;
 
         public ILocation mItem;
 
@@ -71,6 +75,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
             image = (ImageView) view.findViewById(R.id.image);
             city = (TextView) view.findViewById(R.id.city);
             temp = (TextView) view.findViewById(R.id.temp);
+            removeBtn = view.findViewById(R.id.removeBtn);
 
         }
 
@@ -79,7 +84,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
             mItem = newLocation;
 
             city.setText(mItem.getName());
-            temp.setText(String.format("%.0f °C",mItem.getTemp()));
+            temp.setText(mItem.getTemp());
         }
 
     }

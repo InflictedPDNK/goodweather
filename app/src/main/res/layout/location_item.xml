@@ -3,8 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@android:color/holo_blue_light"
-    >
+    android:layout_marginBottom="5dp"
+    android:background="@drawable/element_semi_transparent"
+    android:clickable="true"
+    android:elevation="3dp"
+    android:outlineProvider="bounds">
 
     <ImageView
         android:layout_width="30dp"
@@ -24,7 +27,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:textSize="30sp"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:paddingLeft="5dp"
         android:paddingRight="20dp"
         android:id="@+id/temp"
@@ -32,7 +35,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="13sp"
         android:textStyle="bold"
         android:layout_toRightOf="@+id/image"
@@ -49,13 +52,5 @@
         android:layout_alignParentTop="true"
         android:id="@+id/removeBtn"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/black"
-        />
 
 </RelativeLayout>

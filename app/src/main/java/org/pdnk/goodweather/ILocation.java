@@ -7,13 +7,13 @@ public interface ILocation
 {
     int getId();
     String getName();
-    int getZIP();
+    String getZIP();
     String getCountryCode();
-    double getLongitude();
-    double getLatitude();
+    String getLongitude();
+    String getLatitude();
 
-    double getTemp();
-    float getWind();
+    String getTemp();
+    String getWind();
     String getDescription();
 
 }
