@@ -10,11 +10,12 @@
     android:outlineProvider="bounds">
 
     <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="5dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
         android:layout_centerVertical="true"
-        android:scaleType="fitStart"
+        android:background="@drawable/element_image_bkg"
+        android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_alignParentLeft="true"
         android:id="@+id/image"
@@ -26,22 +27,40 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:textSize="30sp"
+        android:textSize="26sp"
         android:textColor="@android:color/black"
-        android:paddingLeft="5dp"
         android:paddingRight="20dp"
         android:id="@+id/temp"
         />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
         android:textColor="@android:color/black"
-        android:textSize="13sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:layout_toRightOf="@+id/image"
         android:layout_toLeftOf="@+id/temp"
-        android:layout_alignTop="@+id/image"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:id="@+id/city"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:textColor="@android:color/black"
+        android:textSize="13sp"
+        android:textStyle=""
+        android:layout_toRightOf="@+id/image"
+        android:layout_toLeftOf="@+id/temp"
+        android:layout_below="@id/city"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:id="@+id/description"
         />
 
     <ImageView

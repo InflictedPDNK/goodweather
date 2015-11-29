@@ -18,6 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import org.pdnk.goodweather.Fragments.ContentFragment;
+import org.pdnk.goodweather.Fragments.DetailsFragment;
+import org.pdnk.goodweather.Interfaces.ILocation;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -32,12 +36,15 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     final static boolean OPT_STORE_HISTORY_FROM_FAVOURITES = false;
     final static boolean OPT_ENABLE_FINE_LOCATION = false;
     final static boolean OPT_SUBMIT_GPS_SEARCH = false;
+    final static boolean OPT_AUTO_ADD_FAVOURITES = true;
+    final static String OPT_FORCE_UNIT_SYSTEM = null;
+
 
     /**
      * END OF OPTIONS
      */
-    ContentManager<ILocation> contentHistory;
-    ContentManager<ILocation> contentFavourites;
+    ContentManager contentHistory;
+    ContentManager contentFavourites;
 
     GPSManager locationGPSmgr;
 
@@ -51,9 +58,6 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     final String FRAG_HOME = "home";
     final String FRAG_DETAILS = "details";
     final String FRAG_FAVOURITES = "favourites";
-
-    final int CONTENT_MGR_HISTORY = 1;
-    final int CONTENT_MGR_FAVOURITES = 2;
 
     private NavigationState currentNavigationState = NavigationState.UNKNOWN;
 
@@ -98,10 +102,10 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
         initToolbar();
 
-        contentHistory = new ContentManager<>(this, CONTENT_MGR_HISTORY, OPT_MAX_HISTORY);
+        contentHistory = new ContentManager(this, OPT_MAX_HISTORY);
         contentHistory.addObserver(this);
 
-        contentFavourites = new ContentManager<>(this, CONTENT_MGR_FAVOURITES);
+        contentFavourites = new ContentManager(this);
         contentFavourites.addObserver(this);
 
         locationGPSmgr = new GPSManager(this);
@@ -165,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     {
         if(item.getItemId() == R.id.action_location)
         {
-            item.setEnabled(false);
+           // item.setEnabled(false);
             locationGPSmgr.requestCoordinates();
             return true;
         }
@@ -335,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
             switch (trait.action)
             {
                 case UPDATE:
-                    if(trait.location != null)
+                    if(trait.location != null && OPT_AUTO_ADD_FAVOURITES)
                         contentFavourites.addItem((ILocation) trait.location);
                     break;
                 case SELECTEDITEM:
@@ -366,10 +370,10 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
             }
 
             updateButtonVisibility();
-        } else if(observable instanceof GPSManager)
+        } else if(observable == locationGPSmgr)
         {
 
-            findViewById(R.id.action_location).setEnabled(true);
+            //findViewById(R.id.action_location).setEnabled(true);
 
             if(data == null || ((String) data).isEmpty())
             {
@@ -382,8 +386,6 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
             }
 
         }
-
-
 
     }
 

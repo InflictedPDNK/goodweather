@@ -1,4 +1,4 @@
-package org.pdnk.goodweather;
+package org.pdnk.goodweather.Fragments;
 
 
 import android.content.res.ColorStateList;
@@ -8,7 +8,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+
+import org.pdnk.goodweather.ContentManager;
+import org.pdnk.goodweather.Interfaces.ILocation;
+import org.pdnk.goodweather.R;
+import org.pdnk.goodweather.Utility;
 
 
 /**
@@ -16,7 +24,7 @@ import android.widget.TextView;
  */
 public class DetailsFragment extends Fragment
 {
-    ContentManager<ILocation> favouriteContent;
+    ContentManager favouriteContent;
     ILocation locationDetails;
     ColorStateList originalFavBkg;
 
@@ -25,7 +33,7 @@ public class DetailsFragment extends Fragment
         // Required empty public constructor
     }
 
-    public DetailsFragment(ILocation locationDetails, ContentManager<ILocation> favouriteContent)
+    public DetailsFragment(ILocation locationDetails, ContentManager favouriteContent)
     {
         this.locationDetails = locationDetails;
         this.favouriteContent = favouriteContent;
@@ -38,12 +46,7 @@ public class DetailsFragment extends Fragment
     {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
 
-
-        ((TextView) v.findViewById(R.id.city)).setText(locationDetails.getName());
-        ((TextView)v.findViewById(R.id.description)).setText(locationDetails.getDescription());
-        ((TextView)v.findViewById(R.id.temp)).setText(locationDetails.getTemp());
-        ((TextView)v.findViewById(R.id.wind)).setText(locationDetails.getWind());
-        ((TextView)v.findViewById(R.id.coordinates)).setText(locationDetails.getLatitude() + ", " + locationDetails.getLongitude());
+        updateDetails(v);
 
         FloatingActionButton favBtn = (FloatingActionButton) v.findViewById(R.id.favBtn);
         originalFavBkg = favBtn.getBackgroundTintList();
@@ -82,6 +85,41 @@ public class DetailsFragment extends Fragment
             }else
                 favBtn.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(android.R.color.darker_gray)));
         }
+    }
+
+    void updateDetails(View v)
+    {
+        String tempSuffix;
+        String speedSuffix;
+
+        if(Utility.isMetric(getContext()))
+        {
+            tempSuffix = "°C";
+            speedSuffix = " m/s";
+        }else
+        {
+            tempSuffix = "°F";
+            speedSuffix = " M/h";
+        }
+
+        ImageView image = (ImageView) v.findViewById(R.id.weatherImage);
+
+        Picasso
+                .with(getContext())
+                .load(locationDetails.getImageId())
+                .fit()
+                .into(image);
+
+
+        ((TextView) v.findViewById(R.id.city)).setText(locationDetails.getName() + " (" + locationDetails.getCountryCode() + ')');
+        ((TextView)v.findViewById(R.id.description)).setText(locationDetails.getDescription());
+        ((TextView)v.findViewById(R.id.temp)).setText(locationDetails.getTemp() + tempSuffix);
+        ((TextView)v.findViewById(R.id.wind)).setText(locationDetails.getWind() + speedSuffix);
+        ((TextView)v.findViewById(R.id.humidity)).setText(locationDetails.getHumidity() + '%');
+        ((TextView)v.findViewById(R.id.pressure)).setText(locationDetails.getPressure() + " hPa");
+        ((TextView)v.findViewById(R.id.sunrise)).setText(locationDetails.getSunrise());
+        ((TextView)v.findViewById(R.id.sunset)).setText(locationDetails.getSunset());
+        ((TextView)v.findViewById(R.id.coordinates)).setText(locationDetails.getLatitude() + ", " + locationDetails.getLongitude());
     }
 
 }

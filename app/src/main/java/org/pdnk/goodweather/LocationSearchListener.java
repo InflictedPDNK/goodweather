@@ -9,9 +9,9 @@ import android.support.v7.widget.SearchView;
  */
 public class LocationSearchListener implements SearchView.OnQueryTextListener
 {
-    ContentManager<ILocation> content;
+    ContentManager content;
     SearchView parent;
-    public LocationSearchListener(ContentManager<ILocation> content, SearchView sender)
+    public LocationSearchListener(ContentManager content, SearchView sender)
     {
         this.content = content;
         parent = sender;
@@ -19,7 +19,7 @@ public class LocationSearchListener implements SearchView.OnQueryTextListener
     @Override
     public boolean onQueryTextSubmit(String query)
     {
-        content.createTestLocation(query);
+        content.createNewLocation(query);
 
         parent.setQuery("", false);
         parent.setIconified(true);

@@ -9,6 +9,10 @@
     <string name="recent_locations_text">Your recent search results</string>
     <string name="title_favourites">Your favourite locations</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="METRIC">metric</string>
+    <string name="IMPERIAL">imperial</string>
+
+
+
+    <string name="UNITS">@string/METRIC</string>
 </resources>

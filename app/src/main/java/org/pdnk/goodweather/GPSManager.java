@@ -70,7 +70,7 @@ public class GPSManager extends Observable implements LocationListener
 
     public void formLocationString(Location loc)
     {
-        String formedLocationQuery = loc.getLongitude() + "," + loc.getLatitude();
+        String formedLocationQuery = loc.getLatitude() + "," + loc.getLongitude();
         notifyObservers(formedLocationQuery);
     }
 

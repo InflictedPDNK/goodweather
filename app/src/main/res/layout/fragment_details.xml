@@ -13,37 +13,27 @@
         android:id="@+id/favBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="25dp"
         android:src="@drawable/ic_favorite_border_black_48dp"
         />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:text="New Town"
+        android:layout_alignTop="@id/favBtn"
         android:layout_toRightOf="@id/favBtn"
-
         android:id="@+id/city"
         android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"/>
 
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:id="@+id/weatherImage"
-        android:layout_below="@id/city"
-        android:layout_marginTop="40dp"
-        android:layout_alignParentRight="true"
-        />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/weatherImage"
-        android:layout_alignTop="@id/weatherImage"
+        android:layout_below="@id/city"
+        android:layout_marginTop="40dp"
         android:text="33C"
         android:id="@+id/temp"
         android:textSize="32sp"
@@ -51,12 +41,25 @@
         android:textColor="@android:color/white"/>
 
 
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/weatherImage"
+        android:background="@drawable/element_image_bkg"
+        android:layout_below="@id/temp"
+        android:layout_marginTop="10dp"
+        android:elevation="4dp"
+        />
+
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/weatherImage"
-        android:layout_below="@id/temp"
-        android:layout_marginRight="20dp"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
+        android:layout_toRightOf="@id/weatherImage"
+        android:layout_alignTop="@id/weatherImage"
+        android:layout_alignBottom="@id/weatherImage"
+        android:layout_marginLeft="20dp"
         android:text="description"
         android:id="@+id/description"
         android:textSize="22sp"
@@ -132,33 +135,12 @@
         android:textSize="20sp"
         android:textColor="@android:color/white"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/pressureLabel"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="10dp"
-        android:text="Clouds:"
-        android:textStyle="bold"
-        android:id="@+id/cloudsLabel"
-        android:textSize="20sp"
-        android:textColor="@android:color/white"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/cloudsLabel"
-        android:layout_alignBaseline="@id/cloudsLabel"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:text="000hpa"
-        android:id="@+id/clouds"
-        android:textSize="20sp"
-        android:textColor="@android:color/white"/>
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/cloudsLabel"
+        android:layout_below="@id/pressureLabel"
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
         android:text="Sunrise:"

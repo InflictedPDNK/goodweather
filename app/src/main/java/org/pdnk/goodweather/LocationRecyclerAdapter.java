@@ -7,15 +7,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import org.pdnk.goodweather.Interfaces.ILocation;
+
+
 /**
  * Created by Inflicted on 27/11/2015.
  */
 public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecyclerAdapter.ViewHolder>
 {
-    ContentManager<ILocation> content;
+    ContentManager content;
     boolean reoderOnSelect;
 
-    public LocationRecyclerAdapter(ContentManager<ILocation> content, boolean reoderOnSelect)
+    public LocationRecyclerAdapter(ContentManager content, boolean reoderOnSelect)
     {
         this.reoderOnSelect = reoderOnSelect;
         this.content = content;
@@ -64,6 +69,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         ImageView image;
         TextView city;
         TextView temp;
+        TextView description;
         View removeBtn;
 
         public ILocation mItem;
@@ -75,7 +81,9 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
             image = (ImageView) view.findViewById(R.id.image);
             city = (TextView) view.findViewById(R.id.city);
             temp = (TextView) view.findViewById(R.id.temp);
+            description = (TextView) view.findViewById(R.id.description);
             removeBtn = view.findViewById(R.id.removeBtn);
+
 
         }
 
@@ -83,8 +91,26 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
         {
             mItem = newLocation;
 
+            String tempSuffix;
+
+            if(Utility.isMetric(itemView.getContext()))
+            {
+                tempSuffix = "°C";
+            }else
+            {
+                tempSuffix = "°F";
+            }
+
             city.setText(mItem.getName());
-            temp.setText(mItem.getTemp());
+            temp.setText(mItem.getTemp() + tempSuffix);
+            description.setText(mItem.getDescription());
+
+            Picasso
+                    .with(image.getContext())
+                    .load(mItem.getImageId())
+                    .fit()
+                    .placeholder(R.drawable.ic_label_outline_black_48dp)
+                    .into(image);
         }
 
     }

@@ -2,13 +2,17 @@ package org.pdnk.goodweather;
 
 import android.content.Context;
 
+import org.pdnk.goodweather.Interfaces.ILocation;
+import org.pdnk.goodweather.Interfaces.IWeatherProvider;
+import org.pdnk.goodweather.Provider.RetrofitWeatherProvider;
+
 import java.util.LinkedList;
 import java.util.Observable;
 
 /**
  * Created by Inflicted on 27/11/2015.
  */
-public class ContentManager<T> extends Observable
+public class ContentManager extends Observable
 {
     enum UpdateAction {
         UPDATE,
@@ -16,38 +20,38 @@ public class ContentManager<T> extends Observable
         SELECTEDITEM
     };
 
-    LinkedList<T> content = new LinkedList<T>();
-    private int myId;
+    LinkedList<ILocation> content = new LinkedList<>();
     private int maxCount = 0;
 
-    T selectedLocation;
+    ILocation selectedLocation;
 
-    class UpdateTrait extends Object
+    IWeatherProvider provider;
+
+    public class UpdateTrait extends Object
     {
         public UpdateAction action;
-        public int managerId;
-        public T location;
+        public ILocation location;
 
-        public UpdateTrait(int managerId, UpdateAction action, T location)
+        public UpdateTrait(UpdateAction action, ILocation location)
         {
-            this.managerId = managerId;
             this.action = action;
             this.location = location;
         }
     }
 
-    public ContentManager(Context ctx, int managerId)
+    public ContentManager(Context ctx)
     {
-        myId = managerId;
+
+        provider = new RetrofitWeatherProvider(ctx);
     }
 
-    public ContentManager(Context ctx, int managerId, int maxCount)
+    public ContentManager(Context ctx, int maxCount)
     {
-        myId = managerId;
+        provider = new RetrofitWeatherProvider(ctx);
         this.maxCount = maxCount;
     }
 
-    public LinkedList<T> getContent()
+    public LinkedList<ILocation> getContent()
     {
         return content;
     }
@@ -57,23 +61,21 @@ public class ContentManager<T> extends Observable
 
     }
 
-    //test
-    public  void createTestLocation(String incomingQuery)
+    public  void createNewLocation(String incomingQuery)
     {
+        //TODO: try and find the existing first instead of creating each time
 
         ILocation newLocation = WeatherLocation.createFromSearchQuery(incomingQuery);
 
-        addItem((T) newLocation);
-
-        setSelectedLocation((T) newLocation, false);
+        provider.updateLocation(newLocation, this);
     }
 
-    public T getSelectedLocation()
+    public ILocation getSelectedLocation()
     {
         return selectedLocation;
     }
 
-    public void setSelectedLocation(T location, boolean reorder)
+    public void setSelectedLocation(ILocation location, boolean reorder)
     {
         if(reorder && content.contains(location))
         {
@@ -86,10 +88,10 @@ public class ContentManager<T> extends Observable
         selectedLocation = location;
 
         setChanged();
-        notifyObservers(new UpdateTrait(myId, UpdateAction.SELECTEDITEM, selectedLocation));
+        notifyObservers(new UpdateTrait(UpdateAction.SELECTEDITEM, selectedLocation));
     }
 
-    public void addItem(T item)
+    public void addItem(ILocation item)
     {
         if(maxCount > 0 && content.size() > maxCount)
         {
@@ -99,22 +101,22 @@ public class ContentManager<T> extends Observable
 
         setChanged();
 
-        notifyObservers(new UpdateTrait(myId, UpdateAction.UPDATE, item));
+        notifyObservers(new UpdateTrait(UpdateAction.UPDATE, item));
     }
 
-    public boolean contains(T item)
+    public boolean contains(ILocation item)
     {
         return content.contains(item);
     }
 
-    public void removeItem(T item)
+    public void removeItem(ILocation item)
     {
         if(item == selectedLocation)
             selectedLocation = null;
 
         content.remove(item);
         setChanged();
-        notifyObservers(new UpdateTrait(myId, UpdateAction.UPDATE, null));
+        notifyObservers(new UpdateTrait(UpdateAction.UPDATE, null));
     }
 
     public void removeAll()
@@ -123,7 +125,7 @@ public class ContentManager<T> extends Observable
 
         content.clear();
         setChanged();
-        notifyObservers(new UpdateTrait(myId, UpdateAction.CLEAR, null));
+        notifyObservers(new UpdateTrait(UpdateAction.CLEAR, null));
     }
 
 }

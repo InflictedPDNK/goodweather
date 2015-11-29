@@ -1,4 +1,4 @@
-package org.pdnk.goodweather;
+package org.pdnk.goodweather.Interfaces;
 
 /**
  * Created by Inflicted on 27/11/2015.
@@ -7,7 +7,6 @@ public interface ILocation
 {
     int getId();
     String getName();
-    String getZIP();
     String getCountryCode();
     String getLongitude();
     String getLatitude();
@@ -16,4 +15,11 @@ public interface ILocation
     String getWind();
     String getDescription();
 
+    String getImageId();
+
+    String getPressure();
+    String getHumidity();
+
+    String getSunrise();
+    String getSunset();
 }

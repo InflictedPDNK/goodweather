@@ -1,4 +1,4 @@
-package org.pdnk.goodweather;
+package org.pdnk.goodweather.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.pdnk.goodweather.ContentManager;
+import org.pdnk.goodweather.LocationRecyclerAdapter;
+import org.pdnk.goodweather.R;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -17,17 +21,17 @@ import java.util.Observer;
  */
 public class ContentFragment extends Fragment implements Observer
 {
-    ContentManager<ILocation> content;
+    ContentManager content;
     View clearAllBtn;
 
     String titleText;
     ViewGroup emptyBlock;
     ViewGroup contentBlock;
 
-    static final String ARG_TITLE = "title";
-    static final String ARG_REORDER_ON_SELECT = "reorder";
-    static final String ARG_EMPTY1 = "empty1";
-    static final String ARG_EMPTY2 = "empty2";
+    public static final String ARG_TITLE = "title";
+    public static final String ARG_REORDER_ON_SELECT = "reorder";
+    public static final String ARG_EMPTY1 = "empty1";
+    public static final String ARG_EMPTY2 = "empty2";
 
     String emptyLine1;
     String emptyLine2;
@@ -38,7 +42,7 @@ public class ContentFragment extends Fragment implements Observer
         //default parameter-less
     };
 
-    public ContentFragment(ContentManager<ILocation> content)
+    public ContentFragment(ContentManager content)
     {
         this.content = content;
         content.addObserver(this);
