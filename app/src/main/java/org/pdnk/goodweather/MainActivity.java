@@ -102,10 +102,10 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
         initToolbar();
 
-        contentHistory = new ContentManager(this, OPT_MAX_HISTORY);
+        contentHistory = new ContentManager(this, "history", OPT_MAX_HISTORY);
         contentHistory.addObserver(this);
 
-        contentFavourites = new ContentManager(this);
+        contentFavourites = new ContentManager(this, "favourites");
         contentFavourites.addObserver(this);
 
         locationGPSmgr = new GPSManager(this);
@@ -192,6 +192,14 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         super.onStart();
 
         setNavigationState(NavigationState.HOME, false);
+    }
+
+    @Override
+    protected void onStop()
+    {
+        contentHistory.saveLocalData();
+        contentFavourites.saveLocalData();
+        super.onStop();
     }
 
     void setNavigationState(NavigationState newState, boolean preserveBackstack)

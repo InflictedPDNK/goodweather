@@ -2,10 +2,22 @@ package org.pdnk.goodweather;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import org.pdnk.goodweather.Interfaces.ILocation;
 import org.pdnk.goodweather.Interfaces.IWeatherProvider;
 import org.pdnk.goodweather.Provider.RetrofitWeatherProvider;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Observable;
 
@@ -22,10 +34,12 @@ public class ContentManager extends Observable
 
     LinkedList<ILocation> content = new LinkedList<>();
     private int maxCount = 0;
+    private String myId;
 
     ILocation selectedLocation;
 
     IWeatherProvider provider;
+    Context ctx;
 
     public class UpdateTrait extends Object
     {
@@ -39,16 +53,21 @@ public class ContentManager extends Observable
         }
     }
 
-    public ContentManager(Context ctx)
+    public ContentManager(Context ctx, String myId)
     {
-
+        this.myId = myId;
+        this.ctx = ctx;
         provider = new RetrofitWeatherProvider(ctx);
+        loadLocalData();
     }
 
-    public ContentManager(Context ctx, int maxCount)
+    public ContentManager(Context ctx, String myId, int maxCount)
     {
+        this.myId = myId;
+        this.ctx = ctx;
         provider = new RetrofitWeatherProvider(ctx);
         this.maxCount = maxCount;
+        loadLocalData();
     }
 
     public LinkedList<ILocation> getContent()
@@ -56,15 +75,52 @@ public class ContentManager extends Observable
         return content;
     }
 
-    private void loadLocalData()
+    public void loadLocalData()
     {
+
+        ArrayList<String> loaded;
+
+        try {
+            FileInputStream fis = ctx.openFileInput(myId);
+            FileReader r = new FileReader(fis.getFD());
+            Gson gson = new GsonBuilder().create();
+
+            Type collectionType = new TypeToken<LinkedList<WeatherLocation>>(){}.getType();
+            LinkedList<ILocation> loadedList = gson.fromJson(r, collectionType);
+            if(loadedList != null)
+                content = loadedList;
+
+            fis.close();
+
+        } catch (FileNotFoundException e)
+        {
+            return;
+        } catch (IOException e)
+        {
+            return;
+        }
+
 
     }
 
+    public void saveLocalData()
+    {
+        try{
+            FileOutputStream fos = ctx.openFileOutput(myId, Context.MODE_PRIVATE);
+            FileWriter w = new FileWriter(fos.getFD());
+            Gson gson = new GsonBuilder().create();
+            gson.toJson(content, w);
+            w.close();
+            fos.close();
+        }catch (IOException e)
+        {
+            return;
+        }
+    }
+
+
     public  void createNewLocation(String incomingQuery)
     {
-        //TODO: try and find the existing first instead of creating each time
-
         ILocation newLocation = WeatherLocation.createFromSearchQuery(incomingQuery);
 
         provider.updateLocation(newLocation, this);
@@ -77,12 +133,17 @@ public class ContentManager extends Observable
 
     public void setSelectedLocation(ILocation location, boolean reorder)
     {
-        if(reorder && content.contains(location))
+        if(reorder)
         {
-            content.remove(location);
-            content.addFirst(location);
-            //setChanged();
-            //notifyObservers(new UpdateTrait(myId, UpdateAction.UPDATE, null));
+            for(ILocation loc : content)
+            {
+                if(loc.getId() == location.getId())
+                {
+                    content.remove(loc);
+                    content.addFirst(loc);
+                    break;
+                }
+            }
         }
 
         selectedLocation = location;
@@ -93,6 +154,10 @@ public class ContentManager extends Observable
 
     public void addItem(ILocation item)
     {
+        //don't add duplicates
+        if(contains(item))
+            return;
+
         if(maxCount > 0 && content.size() > maxCount)
         {
             content.removeLast();
@@ -100,24 +165,37 @@ public class ContentManager extends Observable
         content.addFirst(item);
 
         setChanged();
-
         notifyObservers(new UpdateTrait(UpdateAction.UPDATE, item));
     }
 
     public boolean contains(ILocation item)
     {
-        return content.contains(item);
+        for(ILocation loc : content)
+        {
+            if(loc.getId() == item.getId())
+                return true;
+        }
+        return false;
     }
 
     public void removeItem(ILocation item)
     {
-        if(item == selectedLocation)
+        if(selectedLocation != null && item.getId() == selectedLocation.getId())
             selectedLocation = null;
 
-        content.remove(item);
-        setChanged();
-        notifyObservers(new UpdateTrait(UpdateAction.UPDATE, null));
+        for(ILocation loc : content)
+        {
+            if(loc.getId() == item.getId())
+            {
+                content.remove(loc);
+                setChanged();
+                notifyObservers(new UpdateTrait(UpdateAction.UPDATE, null));
+                return;
+            }
+        }
+
     }
+
 
     public void removeAll()
     {
