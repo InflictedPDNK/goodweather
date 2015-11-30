@@ -4,7 +4,7 @@ import org.pdnk.goodweather.Interfaces.ILocation;
 import org.pdnk.goodweather.Provider.OpenWeatherModel.OpenWeatherObject;
 import org.pdnk.goodweather.Provider.RetrofitWeatherProvider;
 
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.StringTokenizer;
 
@@ -23,8 +23,8 @@ public class WeatherLocation extends Object implements ILocation
     private int humidity;
     private int pressure;
     private String description;
-    private Date sunrise;
-    private Date sunset;
+    private String sunrise;
+    private String sunset;
 
 
 
@@ -93,9 +93,14 @@ public class WeatherLocation extends Object implements ILocation
 
         o.id = origin.id;
 
-        o.sunrise = new Date(origin.sys.sunrise);
-        o.sunset= new Date(origin.sys.sunset);
+        Date d = new Date(origin.sys.sunrise *1000);
+        SimpleDateFormat f = new SimpleDateFormat("HH:mm");
 
+        //f.setTimeZone(TimeZone.getDefault());
+        o.sunrise = f.format(d) + " UTC";
+
+        d = new Date(origin.sys.sunset *1000);
+        o.sunset = f.format(d) + " UTC";;
         return o;
     }
 
@@ -176,13 +181,13 @@ public class WeatherLocation extends Object implements ILocation
     @Override
     public String getSunrise()
     {
-        return DateFormat.getTimeInstance().format(sunrise);
+        return sunrise;
 
     }
 
     @Override
     public String getSunset()
     {
-        return DateFormat.getTimeInstance().format(sunset);
+        return sunset;
     }
 }

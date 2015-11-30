@@ -52,6 +52,12 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
             @Override
             public void onClick(View v)
             {
+
+                //instruct item to update
+                content.updateItem(holder.mItem);
+
+                //select it for details display. once update completed, the fragment will catch the
+                //update
                 content.setSelectedLocation(holder.mItem, reoderOnSelect);
             }
         });
@@ -101,7 +107,7 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
                 tempSuffix = "°F";
             }
 
-            city.setText(mItem.getName());
+            city.setText(String.format("%s (%s)", mItem.getName(), mItem.getCountryCode()));
             temp.setText(mItem.getTemp() + tempSuffix);
             description.setText(mItem.getDescription());
 

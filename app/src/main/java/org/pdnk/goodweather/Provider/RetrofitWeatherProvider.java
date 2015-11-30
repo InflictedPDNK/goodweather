@@ -40,7 +40,37 @@ public class RetrofitWeatherProvider implements IWeatherProvider
         this.ctx = ctx;
     }
     @Override
-    public ILocation updateLocation(ILocation oldLocation, final ContentManager contentManager)
+    public boolean updateLocation(ILocation oldLocation, final ContentManager contentManager)
+    {
+        Call<OpenWeatherObject> call;
+
+        String units = Utility.isMetric(ctx) ? ctx.getString(R.string.METRIC) : ctx.getString(R.string.IMPERIAL);
+
+        if(oldLocation.getId() == 0)
+            return false;
+
+
+        call = apiService.getById(oldLocation.getId(), units, APP_ID);
+
+        call.enqueue(new Callback<OpenWeatherObject>()
+        {
+            @Override
+            public void onResponse(Response<OpenWeatherObject> response, Retrofit retrofit)
+            {
+                handleSuccessfulResponse(response, contentManager, false);
+            }
+
+            @Override
+            public void onFailure(Throwable t)
+            {
+
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean getLocation(ILocation oldLocation, final ContentManager contentManager)
     {
         Call<OpenWeatherObject> call;
 
@@ -58,19 +88,7 @@ public class RetrofitWeatherProvider implements IWeatherProvider
             @Override
             public void onResponse(Response<OpenWeatherObject> response, Retrofit retrofit)
             {
-                OpenWeatherObject newWeatherObj = response.body();
-
-                ILocation newLocation = WeatherLocation.createFromOpenWeatherObject(newWeatherObj);
-                if(newLocation == null)
-                {
-                    //TODO: handle
-                }else
-                {
-                    contentManager.addItem(newLocation);
-                    contentManager.setSelectedLocation(newLocation, true);
-                }
-
-
+                handleSuccessfulResponse(response, contentManager, true);
             }
 
             @Override
@@ -79,7 +97,23 @@ public class RetrofitWeatherProvider implements IWeatherProvider
 
             }
         });
-        return null;
+        return true;
+    }
+
+    void handleSuccessfulResponse(Response<OpenWeatherObject> response, final ContentManager contentManager, boolean select)
+    {
+        OpenWeatherObject newWeatherObj = response.body();
+
+        ILocation newLocation = WeatherLocation.createFromOpenWeatherObject(newWeatherObj);
+        if(newLocation == null)
+        {
+            //TODO: handle
+        }else
+        {
+            contentManager.addItem(newLocation);
+            if(select)
+                contentManager.setSelectedLocation(newLocation, true);
+        }
     }
 
 }

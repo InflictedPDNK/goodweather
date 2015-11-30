@@ -45,7 +45,6 @@ public class ContentFragment extends Fragment implements Observer
     public ContentFragment(ContentManager content)
     {
         this.content = content;
-        content.addObserver(this);
     }
 
     @Override
@@ -53,6 +52,7 @@ public class ContentFragment extends Fragment implements Observer
                              Bundle savedInstanceState)
     {
 
+        content.addObserver(this);
 
         Bundle b = getArguments();
         boolean reorder = false;
@@ -115,5 +115,12 @@ public class ContentFragment extends Fragment implements Observer
         adapter.notifyDataSetChanged();
 
         updateBlocksVisibility();
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+        content.deleteObserver(this);
+        super.onDestroyView();
     }
 }

@@ -7,6 +7,7 @@ import org.pdnk.goodweather.ContentManager;
  */
 public interface IWeatherProvider
 {
-    ILocation updateLocation(ILocation oldLocation, ContentManager contentManager);
+    boolean getLocation(ILocation oldLocation, ContentManager contentManager);
+    boolean updateLocation(ILocation oldLocation, ContentManager contentManager);
 
 }

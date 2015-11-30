@@ -19,9 +19,9 @@ public class Sys {
     public String country;
     @SerializedName("sunrise")
     @Expose
-    public int sunrise;
+    public long sunrise;
     @SerializedName("sunset")
     @Expose
-    public int sunset;
+    public long sunset;
 
 }

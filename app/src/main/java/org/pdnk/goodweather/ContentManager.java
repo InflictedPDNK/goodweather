@@ -11,13 +11,11 @@ import org.pdnk.goodweather.Interfaces.IWeatherProvider;
 import org.pdnk.goodweather.Provider.RetrofitWeatherProvider;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Observable;
 
@@ -26,7 +24,8 @@ import java.util.Observable;
  */
 public class ContentManager extends Observable
 {
-    enum UpdateAction {
+    public enum UpdateAction {
+        ADDEDNEW,
         UPDATE,
         CLEAR,
         SELECTEDITEM
@@ -57,17 +56,20 @@ public class ContentManager extends Observable
     {
         this.myId = myId;
         this.ctx = ctx;
-        provider = new RetrofitWeatherProvider(ctx);
-        loadLocalData();
+        init();
     }
 
     public ContentManager(Context ctx, String myId, int maxCount)
     {
-        this.myId = myId;
-        this.ctx = ctx;
-        provider = new RetrofitWeatherProvider(ctx);
+        this(ctx, myId);
         this.maxCount = maxCount;
+    }
+
+    void init()
+    {
+        provider = new RetrofitWeatherProvider(ctx);
         loadLocalData();
+        updateAll();
     }
 
     public LinkedList<ILocation> getContent()
@@ -77,8 +79,6 @@ public class ContentManager extends Observable
 
     public void loadLocalData()
     {
-
-        ArrayList<String> loaded;
 
         try {
             FileInputStream fis = ctx.openFileInput(myId);
@@ -92,15 +92,10 @@ public class ContentManager extends Observable
 
             fis.close();
 
-        } catch (FileNotFoundException e)
-        {
-            return;
-        } catch (IOException e)
+        } catch (Exception e)
         {
             return;
         }
-
-
     }
 
     public void saveLocalData()
@@ -123,12 +118,7 @@ public class ContentManager extends Observable
     {
         ILocation newLocation = WeatherLocation.createFromSearchQuery(incomingQuery);
 
-        provider.updateLocation(newLocation, this);
-    }
-
-    public ILocation getSelectedLocation()
-    {
-        return selectedLocation;
+        provider.getLocation(newLocation, this);
     }
 
     public void setSelectedLocation(ILocation location, boolean reorder)
@@ -154,18 +144,40 @@ public class ContentManager extends Observable
 
     public void addItem(ILocation item)
     {
-        //don't add duplicates
         if(contains(item))
-            return;
-
-        if(maxCount > 0 && content.size() > maxCount)
         {
-            content.removeLast();
-        }
-        content.addFirst(item);
+            for (ILocation loc : content)
+            {
+                if (loc.getId() == item.getId())
+                {
+                    content.set(content.indexOf(loc), item);
+                    setChanged();
+                    notifyObservers(new UpdateTrait(UpdateAction.UPDATE, item));
+                    return;
+                }
+            }
+        }else
+        {
+            if (maxCount > 0 && content.size() > maxCount)
+            {
+                content.removeLast();
+            }
+            content.addFirst(item);
 
-        setChanged();
-        notifyObservers(new UpdateTrait(UpdateAction.UPDATE, item));
+            setChanged();
+            notifyObservers(new UpdateTrait(UpdateAction.ADDEDNEW, item));
+        }
+    }
+
+    public void updateItem(ILocation item)
+    {
+        provider.updateLocation(item, this);
+    }
+
+    public void updateAll()
+    {
+        for(ILocation loc : content)
+            provider.updateLocation(loc, this);
     }
 
     public boolean contains(ILocation item)
@@ -195,7 +207,6 @@ public class ContentManager extends Observable
         }
 
     }
-
 
     public void removeAll()
     {

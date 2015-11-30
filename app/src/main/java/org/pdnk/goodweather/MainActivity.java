@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     private View favBtn;
     private android.support.v7.widget.SearchView searchView;
 
+    ILocation lastSelectedLocation;
+    boolean wasSuspended = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -125,7 +128,10 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
     private void onRefreshBtnClick(View v)
     {
-
+        if(currentNavigationState == NavigationState.HOME)
+            contentHistory.updateAll();
+        else if(currentNavigationState == NavigationState.HOME)
+            contentFavourites.updateAll();
     }
 
 
@@ -202,6 +208,32 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         super.onStop();
     }
 
+    @Override
+    protected void onDestroy()
+    {
+        contentFavourites.deleteObserver(this);
+        contentHistory.deleteObserver(this);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        wasSuspended = true;
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        if(wasSuspended)
+        {
+            wasSuspended = false;
+            contentHistory.updateAll();
+        }
+        super.onResume();
+    }
+
     void setNavigationState(NavigationState newState, boolean preserveBackstack)
     {
         switch (newState)
@@ -230,6 +262,8 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
     private void navigateFavourites()
     {
+        contentFavourites.updateAll();
+
         FragmentManager fm = getSupportFragmentManager();
 
         Fragment favourites = new ContentFragment(contentFavourites);
@@ -282,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     {
         FragmentManager fm = getSupportFragmentManager();
 
-        Fragment details = new DetailsFragment(contentHistory.getSelectedLocation(), contentFavourites);
+        Fragment details = new DetailsFragment(lastSelectedLocation, contentHistory, contentFavourites);
 
         android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
 
@@ -346,11 +380,12 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
             ContentManager.UpdateTrait trait = (ContentManager.UpdateTrait) data;
             switch (trait.action)
             {
-                case UPDATE:
+                case ADDEDNEW:
                     if(trait.location != null && OPT_AUTO_ADD_FAVOURITES)
                         contentFavourites.addItem((ILocation) trait.location);
                     break;
                 case SELECTEDITEM:
+                    lastSelectedLocation = trait.location;
                     setNavigationState(NavigationState.DETAILS, false);
                     break;
             }
@@ -409,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                 favBtn.setVisibility(contentFavourites.getContent().isEmpty() ? View.INVISIBLE : View.VISIBLE);
                 break;
             case DETAILS:
-                refreshBtn.setVisibility(View.VISIBLE);
+                refreshBtn.setVisibility(View.INVISIBLE);
                 favBtn.setVisibility(View.INVISIBLE);
                 break;
             case FAVOURITES:

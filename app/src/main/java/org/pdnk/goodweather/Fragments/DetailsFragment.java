@@ -18,25 +18,43 @@ import org.pdnk.goodweather.Interfaces.ILocation;
 import org.pdnk.goodweather.R;
 import org.pdnk.goodweather.Utility;
 
+import java.util.Observable;
+import java.util.Observer;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DetailsFragment extends Fragment
+public class DetailsFragment extends Fragment implements Observer
 {
     ContentManager favouriteContent;
-    ILocation locationDetails;
+    ContentManager historyContent;
+    public ILocation locationDetails;
     ColorStateList originalFavBkg;
+
+    TextView city;
+    TextView description;
+    TextView temp;
+    TextView wind;
+    TextView humidity;
+    TextView pressure;
+    TextView sunrise;
+    TextView sunset;
+    TextView coordinates;
+    ImageView image;
+
+
 
     public DetailsFragment()
     {
         // Required empty public constructor
     }
 
-    public DetailsFragment(ILocation locationDetails, ContentManager favouriteContent)
+    public DetailsFragment(ILocation locationDetails, ContentManager historyContent, ContentManager favouriteContent)
     {
         this.locationDetails = locationDetails;
         this.favouriteContent = favouriteContent;
+        this.historyContent = historyContent;
     }
 
 
@@ -45,6 +63,21 @@ public class DetailsFragment extends Fragment
                              Bundle savedInstanceState)
     {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
+
+        city = ((TextView) v.findViewById(R.id.city));
+        description = ((TextView)v.findViewById(R.id.description));
+        temp = ((TextView)v.findViewById(R.id.temp));
+        wind =  ((TextView)v.findViewById(R.id.wind));
+        humidity = ((TextView)v.findViewById(R.id.humidity));
+        pressure = ((TextView)v.findViewById(R.id.pressure));
+        sunrise = ((TextView)v.findViewById(R.id.sunrise));
+        sunset = ((TextView)v.findViewById(R.id.sunset));
+        coordinates = ((TextView)v.findViewById(R.id.coordinates));
+        image = (ImageView) v.findViewById(R.id.weatherImage);
+
+        historyContent.addObserver(this);
+        favouriteContent.addObserver(this);
+
 
         updateDetails(v);
 
@@ -61,7 +94,6 @@ public class DetailsFragment extends Fragment
                 updateFavouriteState((FloatingActionButton) v, true);
             }
         });
-
 
         return v;
     }
@@ -92,7 +124,7 @@ public class DetailsFragment extends Fragment
         String tempSuffix;
         String speedSuffix;
 
-        if(Utility.isMetric(getContext()))
+        if(Utility.isMetric(v.getContext()))
         {
             tempSuffix = "°C";
             speedSuffix = " m/s";
@@ -102,8 +134,6 @@ public class DetailsFragment extends Fragment
             speedSuffix = " M/h";
         }
 
-        ImageView image = (ImageView) v.findViewById(R.id.weatherImage);
-
         Picasso
                 .with(getContext())
                 .load(locationDetails.getImageId())
@@ -111,15 +141,33 @@ public class DetailsFragment extends Fragment
                 .into(image);
 
 
-        ((TextView) v.findViewById(R.id.city)).setText(locationDetails.getName() + " (" + locationDetails.getCountryCode() + ')');
-        ((TextView)v.findViewById(R.id.description)).setText(locationDetails.getDescription());
-        ((TextView)v.findViewById(R.id.temp)).setText(locationDetails.getTemp() + tempSuffix);
-        ((TextView)v.findViewById(R.id.wind)).setText(locationDetails.getWind() + speedSuffix);
-        ((TextView)v.findViewById(R.id.humidity)).setText(locationDetails.getHumidity() + '%');
-        ((TextView)v.findViewById(R.id.pressure)).setText(locationDetails.getPressure() + " hPa");
-        ((TextView)v.findViewById(R.id.sunrise)).setText(locationDetails.getSunrise());
-        ((TextView)v.findViewById(R.id.sunset)).setText(locationDetails.getSunset());
-        ((TextView)v.findViewById(R.id.coordinates)).setText(locationDetails.getLatitude() + ", " + locationDetails.getLongitude());
+        city.setText(locationDetails.getName() + " (" + locationDetails.getCountryCode() + ')');
+        description.setText(locationDetails.getDescription());
+        temp.setText(locationDetails.getTemp() + tempSuffix);
+        wind.setText(locationDetails.getWind() + speedSuffix);
+        humidity.setText(locationDetails.getHumidity() + '%');
+        pressure.setText(locationDetails.getPressure() + " hPa");
+        sunrise.setText(locationDetails.getSunrise());
+        sunset.setText(locationDetails.getSunset());
+        coordinates.setText(locationDetails.getLatitude() + ", " + locationDetails.getLongitude());
     }
 
+    @Override
+    public void update(Observable observable, Object data)
+    {
+        ContentManager.UpdateTrait trait = (ContentManager.UpdateTrait) data;
+        if(trait.action == ContentManager.UpdateAction.UPDATE && trait.location != null && locationDetails.getId() == trait.location.getId())
+        {
+            locationDetails = ((ContentManager.UpdateTrait) data).location;
+            updateDetails(getView());
+        }
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+        historyContent.deleteObserver(this);
+        favouriteContent.deleteObserver(this);
+        super.onDestroyView();
+    }
 }
