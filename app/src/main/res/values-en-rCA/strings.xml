@@ -1,0 +1,4 @@
+<resources>
+    <string name="UNITS">@string/IMPERIAL</string>
+    <string name="app_name">GoodEhWeather</string>
+</resources>

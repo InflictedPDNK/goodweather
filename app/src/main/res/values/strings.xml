@@ -12,7 +12,5 @@
     <string name="METRIC">metric</string>
     <string name="IMPERIAL">imperial</string>
 
-
-
     <string name="UNITS">@string/METRIC</string>
 </resources>
