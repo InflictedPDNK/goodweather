@@ -434,24 +434,32 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
     void updateButtonVisibility()
     {
-        refreshBtn.setVisibility(View.INVISIBLE);
-        favBtn.setVisibility(View.INVISIBLE);
-
-        switch (currentNavigationState)
+        runOnUiThread(new Runnable()
         {
-            case HOME:
-                refreshBtn.setVisibility(contentHistory.getContent().isEmpty()? View.INVISIBLE : View.VISIBLE);
-                favBtn.setVisibility(contentFavourites.getContent().isEmpty() ? View.INVISIBLE : View.VISIBLE);
-                break;
-            case DETAILS:
+            @Override
+            public void run()
+            {
                 refreshBtn.setVisibility(View.INVISIBLE);
                 favBtn.setVisibility(View.INVISIBLE);
-                break;
-            case FAVOURITES:
-                refreshBtn.setVisibility(View.VISIBLE);
-                favBtn.setVisibility(View.INVISIBLE);
-                break;
-        }
+
+                switch (currentNavigationState)
+                {
+                    case HOME:
+                        refreshBtn.setVisibility(contentHistory.getContent().isEmpty() ? View.INVISIBLE : View.VISIBLE);
+                        favBtn.setVisibility(contentFavourites.getContent().isEmpty() ? View.INVISIBLE : View.VISIBLE);
+                        break;
+                    case DETAILS:
+                        refreshBtn.setVisibility(View.INVISIBLE);
+                        favBtn.setVisibility(View.INVISIBLE);
+                        break;
+                    case FAVOURITES:
+                        refreshBtn.setVisibility(View.VISIBLE);
+                        favBtn.setVisibility(View.INVISIBLE);
+                        break;
+                }
+            }
+        });
+
 
     }
 

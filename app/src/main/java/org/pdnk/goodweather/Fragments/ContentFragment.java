@@ -111,10 +111,18 @@ public class ContentFragment extends Fragment implements Observer
         ContentManager.UpdateTrait trait = (ContentManager.UpdateTrait) data;
 
 
-        adapter.notifyItemRangeChanged(0, adapter.getItemCount());
-        adapter.notifyDataSetChanged();
+        getActivity().runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                adapter.notifyItemRangeChanged(0, adapter.getItemCount());
+                adapter.notifyDataSetChanged();
 
-        updateBlocksVisibility();
+                updateBlocksVisibility();
+            }
+        });
+
     }
 
     @Override
