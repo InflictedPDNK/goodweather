@@ -52,6 +52,8 @@ public class DataPresentationTest extends ActivityInstrumentationTestCase2<MainA
         ILocation loc = WeatherLocation.createFromOpenWeatherObject(obj);
         getActivity().contentHistory.addItem(loc);
 
+        Thread.sleep(2000);
+
         FragmentManager fm =  getActivity().getSupportFragmentManager();
         Fragment f = fm.findFragmentByTag("home");
 
