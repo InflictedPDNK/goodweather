@@ -41,7 +41,7 @@ public class WeatherLocation extends Object implements ILocation
         //if first char is letter, perhaps it's a city name
         if(Character.isLetter(modifiedQuery.charAt(0)))
         {
-            o.name = searchQuery;
+            o.name = modifiedQuery;
             return o;
         }
 
@@ -89,7 +89,7 @@ public class WeatherLocation extends Object implements ILocation
 
         o.temp = origin.main.temp;
         o.humidity = origin.main.humidity;
-        o.pressure = origin.main.pressure;
+        o.pressure = (int) origin.main.pressure;
 
         o.id = origin.id;
 

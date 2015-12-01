@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     final static boolean OPT_ENABLE_FINE_LOCATION = false;
     final static boolean OPT_SUBMIT_GPS_SEARCH = false;
     final static boolean OPT_AUTO_ADD_FAVOURITES = true;
-    final static String OPT_FORCE_UNIT_SYSTEM = null;
+    final static String OPT_FORCE_UNIT_SYSTEM = "metric";
 
 
     /**

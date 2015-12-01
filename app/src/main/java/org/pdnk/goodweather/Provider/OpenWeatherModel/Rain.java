@@ -7,6 +7,6 @@ public class Rain {
 
     @SerializedName("3h")
     @Expose
-    public int _3h;
+    public double _3h;
 
 }

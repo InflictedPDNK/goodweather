@@ -159,8 +159,16 @@ public class DetailsFragment extends Fragment implements Observer
         if(trait.action == ContentManager.UpdateAction.UPDATE && trait.location != null && locationDetails.getId() == trait.location.getId())
         {
             locationDetails = ((ContentManager.UpdateTrait) data).location;
-            updateDetails(getView());
+            getView().post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    updateDetails(getView());
+                }
+            });
         }
+
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.pdnk.goodweather.Interfaces.ILocation;
 import org.pdnk.goodweather.Interfaces.IWeatherProvider;
-import org.pdnk.goodweather.Provider.RetrofitWeatherProvider;
+import org.pdnk.goodweather.Provider.OkHTTPWeatherProvider;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -67,7 +67,7 @@ public class ContentManager extends Observable
 
     void init()
     {
-        provider = new RetrofitWeatherProvider(ctx);
+        provider = new OkHTTPWeatherProvider(ctx);
         loadLocalData();
         updateAll();
     }

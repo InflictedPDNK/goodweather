@@ -2,6 +2,8 @@ package org.pdnk.goodweather.Provider;
 
 import android.content.Context;
 
+import com.squareup.okhttp.OkHttpClient;
+
 import org.pdnk.goodweather.ContentManager;
 import org.pdnk.goodweather.Interfaces.ILocation;
 import org.pdnk.goodweather.Interfaces.IWeatherProvider;
@@ -31,11 +33,19 @@ public class RetrofitWeatherProvider implements IWeatherProvider
     Retrofit retro;
     public RetrofitWeatherProvider(Context ctx)
     {
+        OkHttpClient c = new OkHttpClient();
+        c.setFollowRedirects(true);
+
+        c.setFollowSslRedirects(true);
+
         retro = new Retrofit.Builder()
                         .baseUrl(BASE_URL)
+                        .client(c)
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
         apiService = retro.create(RetrofitWeatherAPI.class);
+
+
 
         this.ctx = ctx;
     }
