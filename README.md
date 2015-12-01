@@ -1,5 +1,12 @@
 # goodweather
 
+Latest update:
+- Migrated to OkHTTP which fixed mobile data retrieval (seems like Retrofit has issues with cellular connection on certain phone models)
+- Fixed object model type mismatch (OpenWeatherAPI)
+- Fixed crash in details due to call on non-ui thread
+
+Description
+
 This is a fully working application where I implemented all the requested tasks plus added some other comfy features.
 I added only few tests as I had no time left.
 
@@ -26,7 +33,6 @@ App features are:
 - APP colours, name and units based on Locale (limited set for now)
 
 Known issues and missing features (sorry, had no time):
-- Currently works on WiFi connection only
 - No notifications upon failed actions (unavailable coordinates or not found location)
 - No "loading" or "updating" indication (should be some general spinner indicating activity)
 - Time is given in UTC (need to deduct timezone from coordinates and offset correctly)
@@ -36,7 +42,7 @@ Known issues and missing features (sorry, had no time):
 
 Few technical aspects:
 - Content manager as a Data Source
-- External data provider with flexible models (implemented with Retrofit)
+- External data provider with flexible models (implemented with OkHTTP or Retrofit as alternative)
 - Separation of internal and external Models to allow easy changes
 - FS ser/deser for simplicity and to keep independence. Also preserves existing order without a hassle.
 - Fragments for different presentations
