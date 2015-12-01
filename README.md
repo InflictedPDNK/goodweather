@@ -26,6 +26,7 @@ App features are:
 - APP colours, name and units based on Locale (limited set for now)
 
 Known issues and missing features (sorry, had no time):
+- Currently works on WiFi connection only
 - No notifications upon failed actions (unavailable coordinates or not found location)
 - No "loading" or "updating" indication (should be some general spinner indicating activity)
 - Time is given in UTC (need to deduct timezone from coordinates and offset correctly)
