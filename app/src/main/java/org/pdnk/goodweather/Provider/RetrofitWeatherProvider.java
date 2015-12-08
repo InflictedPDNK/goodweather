@@ -1,6 +1,8 @@
 package org.pdnk.goodweather.Provider;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.v7.app.AlertDialog;
 
 import com.squareup.okhttp.OkHttpClient;
 
@@ -104,7 +106,7 @@ public class RetrofitWeatherProvider implements IWeatherProvider
             @Override
             public void onFailure(Throwable t)
             {
-
+                showFailureMessage("Network request failure");
             }
         });
         return true;
@@ -117,13 +119,32 @@ public class RetrofitWeatherProvider implements IWeatherProvider
         ILocation newLocation = WeatherLocation.createFromOpenWeatherObject(newWeatherObj);
         if(newLocation == null)
         {
-            //TODO: handle
+            showFailureMessage("Location not found or connection failure");
         }else
         {
             contentManager.addItem(newLocation);
             if(select)
                 contentManager.setSelectedLocation(newLocation, true);
         }
+    }
+
+    void showFailureMessage(final String msg)
+    {
+        ((Activity) ctx).runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                AlertDialog.Builder b = new AlertDialog.Builder(ctx);
+                b.setTitle("Update failed");
+                b.setMessage(msg);
+                b.setIcon(android.R.drawable.ic_dialog_alert);
+                b.setPositiveButton("Got it", null);
+
+                b.create().show();
+            }
+        });
+
     }
 
 }

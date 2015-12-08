@@ -30,7 +30,7 @@ public class GPSManager extends Observable implements LocationListener
         }
         else if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
         {
-            locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
+            locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, ctx.getMainLooper());
         }
         else
         {
@@ -47,19 +47,19 @@ public class GPSManager extends Observable implements LocationListener
 
     }
 
-
-
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras)
     {
         if(status != LocationProvider.AVAILABLE)
+        {
             notifyObservers(null);
+        }
     }
 
     @Override
     public void onProviderEnabled(String provider)
     {
-        notifyObservers(null);
+
     }
 
     @Override
@@ -70,8 +70,14 @@ public class GPSManager extends Observable implements LocationListener
 
     public void formLocationString(Location loc)
     {
-        String formedLocationQuery = loc.getLatitude() + "," + loc.getLongitude();
-        notifyObservers(formedLocationQuery);
+        if(loc == null)
+        {
+            notifyObservers(null);
+        }else
+        {
+            String formedLocationQuery = loc.getLatitude() + "," + loc.getLongitude();
+            notifyObservers(formedLocationQuery);
+        }
     }
 
     public void notifyObservers(String coordinates)
@@ -84,4 +90,6 @@ public class GPSManager extends Observable implements LocationListener
         super.notifyObservers(coordinates);
 
     }
+
+
 }

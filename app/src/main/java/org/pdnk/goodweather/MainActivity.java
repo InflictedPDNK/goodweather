@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     {
         if(currentNavigationState == NavigationState.HOME)
             contentHistory.updateAll();
-        else if(currentNavigationState == NavigationState.HOME)
+        else if(currentNavigationState == NavigationState.FAVOURITES)
             contentFavourites.updateAll();
     }
 
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
         EditText searchEdit = (EditText) searchView.findViewById(R.id.search_src_text);
         searchEdit.setHintTextColor(Color.DKGRAY);
+        searchEdit.setTextColor(Color.DKGRAY);
         searchEdit.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.search_text_size));
         searchEdit.setFocusableInTouchMode(true);
         searchEdit.setFocusable(true);
@@ -158,11 +160,14 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         SpannableStringBuilder ssb = new SpannableStringBuilder("  " + getString(R.string.search_hint));
         int textSize = (int) (searchEdit.getTextSize() * 1.25);
         Drawable magIcon = getResources().getDrawable(R.drawable.ic_search_black_18dp);
-        magIcon.setBounds(0, 0, textSize, textSize);
-        ssb.setSpan(new ImageSpan(magIcon),
-                           1,
-                           2,
-                           Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (magIcon != null)
+        {
+            magIcon.setBounds(0, 0, textSize, textSize);
+            ssb.setSpan(new ImageSpan(magIcon),
+                               1,
+                               2,
+                               Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
         searchEdit.setHint(ssb);
 
         searchView.setMaxWidth((int) (getResources().getDisplayMetrics().widthPixels * 0.7));
@@ -187,9 +192,12 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     void initToolbar()
     {
         ActionBar ab = getSupportActionBar();
-        ab.setDisplayShowHomeEnabled(true);
-        ab.setDisplayShowTitleEnabled(false);
-        ab.setLogo(R.drawable.gwlogo);
+        if(ab != null)
+        {
+            ab.setDisplayShowHomeEnabled(true);
+            ab.setDisplayShowTitleEnabled(false);
+            ab.setLogo(R.drawable.gwlogo);
+        }
     }
 
     @Override
@@ -358,11 +366,17 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                         setNavigationState(NavigationState.FAVOURITES, true);
                 }
 
-                ab.setDisplayHomeAsUpEnabled(true);
+                if (ab != null)
+                {
+                    ab.setDisplayHomeAsUpEnabled(true);
+                }
             }
             else
             {
-                ab.setDisplayHomeAsUpEnabled(false);
+                if (ab != null)
+                {
+                    ab.setDisplayHomeAsUpEnabled(false);
+                }
                 setNavigationState(NavigationState.HOME, true);
             }
 
@@ -415,12 +429,11 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
             updateButtonVisibility();
         } else if(observable == locationGPSmgr)
         {
-
             //findViewById(R.id.action_location).setEnabled(true);
 
             if(data == null || ((String) data).isEmpty())
             {
-                showNotification("Failed to obtain GPS coordinates");
+                showFailureMessage("GPS provider is not available");
             }
             else
             {
@@ -463,6 +476,25 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
     }
 
+    void showFailureMessage(final String msg)
+    {
+        final AlertDialog.Builder b = new AlertDialog.Builder(this);
+
+        runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                b.setTitle("Update failed");
+                b.setMessage(msg);
+                b.setIcon(android.R.drawable.ic_dialog_alert);
+                b.setPositiveButton("Got it", null);
+
+                b.create().show();
+            }
+        });
+
+    }
     void showNotification(String message)
     {
         Snackbar.make(getWindow().getDecorView(), message, Snackbar.LENGTH_LONG)
