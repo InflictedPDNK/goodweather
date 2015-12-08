@@ -1,6 +1,12 @@
 # goodweather
 
 Latest update:
+- Added error/failure dialogs
+- Fixed updating favourites list
+- Changed default colours
+- Removed en-US locale
+
+Update 1:
 - Migrated to OkHTTP which fixed mobile data retrieval (seems like Retrofit has issues with cellular connection on certain phone models)
 - Fixed object model type mismatch (OpenWeatherAPI)
 - Fixed crash in details due to call on non-ui thread
