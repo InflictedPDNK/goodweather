@@ -39,11 +39,8 @@ App features are:
 - APP colours, name and units based on Locale (limited set for now)
 
 Known issues and missing features (sorry, had no time):
-- No notifications upon failed actions (unavailable coordinates or not found location)
 - No "loading" or "updating" indication (should be some general spinner indicating activity)
 - Time is given in UTC (need to deduct timezone from coordinates and offset correctly)
-- The app is stable, however I saw few crashes caused by tests in regard to touching UI from another thread (mainly in observers' Update handling). This should be carefully revisited to make it error-proof.
-- MainActivity class is a bit messy
 
 
 Few technical aspects:
