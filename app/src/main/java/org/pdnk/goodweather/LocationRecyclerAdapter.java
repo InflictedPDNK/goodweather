@@ -17,8 +17,8 @@ import org.pdnk.goodweather.Interfaces.ILocation;
  */
 public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecyclerAdapter.ViewHolder>
 {
-    ContentManager content;
-    boolean reoderOnSelect;
+    private final ContentManager content;
+    private final boolean reoderOnSelect;
 
     public LocationRecyclerAdapter(ContentManager content, boolean reoderOnSelect)
     {
@@ -72,11 +72,11 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
 
     public class ViewHolder extends RecyclerView.ViewHolder
     {
-        ImageView image;
-        TextView city;
-        TextView temp;
-        TextView description;
-        View removeBtn;
+        final ImageView image;
+        final TextView city;
+        final TextView temp;
+        final TextView description;
+        final View removeBtn;
 
         public ILocation mItem;
 

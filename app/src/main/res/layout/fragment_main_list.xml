@@ -59,7 +59,7 @@
             android:background="@drawable/element_semi_transparent"
             android:textColor="@android:color/black"
             android:textSize="14sp"
-            android:text="Clear all"
+            android:text="@string/clear_all_text"
             android:layout_alignParentRight="true"
 
             android:layout_alignBaseline="@id/titleTxt"

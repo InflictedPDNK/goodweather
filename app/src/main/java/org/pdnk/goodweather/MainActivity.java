@@ -3,7 +3,6 @@ package org.pdnk.goodweather;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -23,6 +22,7 @@ import org.pdnk.goodweather.Fragments.ContentFragment;
 import org.pdnk.goodweather.Fragments.DetailsFragment;
 import org.pdnk.goodweather.Interfaces.ILocation;
 
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -33,21 +33,21 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
      * CUSTOMISABLE OPTIONS WHICH COULD GO TO APP's SETTINGS:
      */
 
-    final static int OPT_MAX_HISTORY = 10;
-    final static boolean OPT_STORE_HISTORY_FROM_FAVOURITES = false;
+    private final static int OPT_MAX_HISTORY = 10;
+    private final static boolean OPT_STORE_HISTORY_FROM_FAVOURITES = false;
     final static boolean OPT_ENABLE_FINE_LOCATION = false;
-    final static boolean OPT_SUBMIT_GPS_SEARCH = false;
-    final static boolean OPT_AUTO_ADD_FAVOURITES = true;
-    final static String OPT_FORCE_UNIT_SYSTEM = "metric";
+    private final static boolean OPT_SUBMIT_GPS_SEARCH = false;
+    private final static boolean OPT_AUTO_ADD_FAVOURITES = true;
+    final static String OPT_FORCE_UNIT_SYSTEM = null;
 
 
     /**
      * END OF OPTIONS
      */
-    ContentManager contentHistory;
-    ContentManager contentFavourites;
+    private ContentManager contentHistory;
+    private ContentManager contentFavourites;
 
-    GPSManager locationGPSmgr;
+    private GPSManager locationGPSmgr;
 
     enum NavigationState {
         UNKNOWN,
@@ -56,9 +56,9 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         FAVOURITES
     }
 
-    final String FRAG_HOME = "home";
-    final String FRAG_DETAILS = "details";
-    final String FRAG_FAVOURITES = "favourites";
+    private final String FRAG_HOME = "home";
+    private final String FRAG_DETAILS = "details";
+    private final String FRAG_FAVOURITES = "favourites";
 
     private NavigationState currentNavigationState = NavigationState.UNKNOWN;
 
@@ -68,8 +68,8 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     private View favBtn;
     private android.support.v7.widget.SearchView searchView;
 
-    ILocation lastSelectedLocation;
-    boolean wasSuspended = false;
+    private ILocation lastSelectedLocation;
+    private boolean wasSuspended = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     }
 
 
-    void initToolbar()
+    private void initToolbar()
     {
         ActionBar ab = getSupportActionBar();
         if(ab != null)
@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         super.onResume();
     }
 
-    void setNavigationState(NavigationState newState, boolean preserveBackstack)
+    private void setNavigationState(NavigationState newState, boolean preserveBackstack)
     {
         switch (newState)
         {
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
     }
 
-    void navigateHome()
+    private void navigateHome()
     {
         FragmentManager fm = getSupportFragmentManager();
 
@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         ft.commitAllowingStateLoss();
     }
 
-    void navigateDetails()
+    private void navigateDetails()
     {
         FragmentManager fm = getSupportFragmentManager();
 
@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                     FragmentManager.BackStackEntry entry = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1);
 
                     //only explicitly set to favourites as favourites can be only on level 2,
-                    if (entry.getName() == FRAG_FAVOURITES)
+                    if (Objects.equals(entry.getName(), FRAG_FAVOURITES))
                         setNavigationState(NavigationState.FAVOURITES, true);
                 }
 
@@ -396,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
             {
                 case ADDEDNEW:
                     if(trait.location != null && OPT_AUTO_ADD_FAVOURITES)
-                        contentFavourites.addItem((ILocation) trait.location);
+                        contentFavourites.addItem(trait.location);
                     break;
                 case SELECTEDITEM:
                     lastSelectedLocation = trait.location;
@@ -420,9 +420,9 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
                     //if option enabled, store item to history
                     if(OPT_STORE_HISTORY_FROM_FAVOURITES)
-                        contentHistory.addItem((ILocation) trait.location);
+                        contentHistory.addItem(trait.location);
 
-                    contentHistory.setSelectedLocation((ILocation) trait.location, true);
+                    contentHistory.setSelectedLocation(trait.location, true);
                     break;
             }
 
@@ -445,7 +445,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
     }
 
-    void updateButtonVisibility()
+    private void updateButtonVisibility()
     {
         runOnUiThread(new Runnable()
         {
@@ -476,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
     }
 
-    void showFailureMessage(final String msg)
+    private void showFailureMessage(final String msg)
     {
         final AlertDialog.Builder b = new AlertDialog.Builder(this);
 
@@ -495,11 +495,4 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         });
 
     }
-    void showNotification(String message)
-    {
-        Snackbar.make(getWindow().getDecorView(), message, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-    }
-
-
 }

@@ -12,9 +12,9 @@ import java.util.Observable;
 /**
  * Created by Inflicted on 28/11/2015.
  */
-public class GPSManager extends Observable implements LocationListener
+class GPSManager extends Observable implements LocationListener
 {
-    Context ctx;
+    private final Context ctx;
     public GPSManager(Context ctx)
     {
         this.ctx = ctx;
@@ -68,7 +68,7 @@ public class GPSManager extends Observable implements LocationListener
         notifyObservers(null);
     }
 
-    public void formLocationString(Location loc)
+    private void formLocationString(Location loc)
     {
         if(loc == null)
         {
@@ -80,7 +80,7 @@ public class GPSManager extends Observable implements LocationListener
         }
     }
 
-    public void notifyObservers(String coordinates)
+    private void notifyObservers(String coordinates)
     {
         //immediately remove updates
         LocationManager locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);

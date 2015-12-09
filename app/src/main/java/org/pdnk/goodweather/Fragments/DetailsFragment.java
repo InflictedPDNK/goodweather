@@ -27,21 +27,21 @@ import java.util.Observer;
  */
 public class DetailsFragment extends Fragment implements Observer
 {
-    ContentManager favouriteContent;
-    ContentManager historyContent;
-    public ILocation locationDetails;
-    ColorStateList originalFavBkg;
+    private ContentManager favouriteContent;
+    private ContentManager historyContent;
+    private ILocation locationDetails;
+    private ColorStateList originalFavBkg;
 
-    TextView city;
-    TextView description;
-    TextView temp;
-    TextView wind;
-    TextView humidity;
-    TextView pressure;
-    TextView sunrise;
-    TextView sunset;
-    TextView coordinates;
-    ImageView image;
+    private TextView city;
+    private TextView description;
+    private TextView temp;
+    private TextView wind;
+    private TextView humidity;
+    private TextView pressure;
+    private TextView sunrise;
+    private TextView sunset;
+    private TextView coordinates;
+    private ImageView image;
 
 
 
@@ -98,7 +98,7 @@ public class DetailsFragment extends Fragment implements Observer
         return v;
     }
 
-    void updateFavouriteState(FloatingActionButton favBtn, boolean modify)
+    private void updateFavouriteState(FloatingActionButton favBtn, boolean modify)
     {
         if(favouriteContent.contains(locationDetails))
         {
@@ -119,7 +119,7 @@ public class DetailsFragment extends Fragment implements Observer
         }
     }
 
-    void updateDetails(View v)
+    private void updateDetails(View v)
     {
         String tempSuffix;
         String speedSuffix;
@@ -159,14 +159,17 @@ public class DetailsFragment extends Fragment implements Observer
         if(trait.action == ContentManager.UpdateAction.UPDATE && trait.location != null && locationDetails.getId() == trait.location.getId())
         {
             locationDetails = ((ContentManager.UpdateTrait) data).location;
-            getView().post(new Runnable()
+            if(getView() != null)
             {
-                @Override
-                public void run()
+                getView().post(new Runnable()
                 {
-                    updateDetails(getView());
-                }
-            });
+                    @Override
+                    public void run()
+                    {
+                        updateDetails(getView());
+                    }
+                });
+            }
         }
 
     }

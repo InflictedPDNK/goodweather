@@ -6,14 +6,15 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenWeatherObject extends Object {
+public class OpenWeatherObject
+{
 
     @SerializedName("coord")
     @Expose
     public Coord coord;
     @SerializedName("weather")
     @Expose
-    public List<Weather> weather = new ArrayList<Weather>();
+    public final List<Weather> weather = new ArrayList<>();
     @SerializedName("base")
     @Expose
     public String base;

@@ -26,12 +26,12 @@ import java.io.IOException;
  */
 public class OkHTTPWeatherProvider implements IWeatherProvider
 {
-    private Context ctx;
-    final String BASE_URL = "http://api.openweathermap.org";
+    private final Context ctx;
+    private final String BASE_URL = "http://api.openweathermap.org";
     public static final String IMAGE_URL = "http://openweathermap.org/img/w/";
-    final String APP_ID = "95d190a434083879a6398aafd54d9e73";
+    private final String APP_ID = "95d190a434083879a6398aafd54d9e73";
 
-    OkHttpClient okClient;
+    private final OkHttpClient okClient;
     public OkHTTPWeatherProvider(Context ctx)
     {
         okClient = new OkHttpClient();
@@ -85,7 +85,7 @@ public class OkHTTPWeatherProvider implements IWeatherProvider
 
         String units = Utility.isMetric(ctx) ? ctx.getString(R.string.METRIC) : ctx.getString(R.string.IMPERIAL);
 
-        String url = String.format("%s/data/2.5/weather?id=%s&units=%s&appid=%s", BASE_URL, oldLocation.getId(), units, APP_ID);;
+        String url = String.format("%s/data/2.5/weather?id=%s&units=%s&appid=%s", BASE_URL, oldLocation.getId(), units, APP_ID);
 
         Request request = new Request.Builder()
                                   .url(url)
@@ -108,7 +108,7 @@ public class OkHTTPWeatherProvider implements IWeatherProvider
         return true;
     }
 
-    void handleSuccessfulResponse(Response response, final ContentManager contentManager, boolean select) throws IOException
+    private void handleSuccessfulResponse(Response response, final ContentManager contentManager, boolean select) throws IOException
     {
         Gson gson = new Gson();
 
@@ -127,7 +127,7 @@ public class OkHTTPWeatherProvider implements IWeatherProvider
         }
     }
 
-    void showFailureMessage(final String msg)
+    private void showFailureMessage(final String msg)
     {
         ((Activity) ctx).runOnUiThread(new Runnable()
         {

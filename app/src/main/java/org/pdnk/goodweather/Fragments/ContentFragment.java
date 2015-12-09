@@ -21,26 +21,26 @@ import java.util.Observer;
  */
 public class ContentFragment extends Fragment implements Observer
 {
-    ContentManager content;
-    View clearAllBtn;
+    private ContentManager content;
+    private View clearAllBtn;
 
-    String titleText;
-    ViewGroup emptyBlock;
-    ViewGroup contentBlock;
+    private String titleText;
+    private ViewGroup emptyBlock;
+    private ViewGroup contentBlock;
 
     public static final String ARG_TITLE = "title";
     public static final String ARG_REORDER_ON_SELECT = "reorder";
     public static final String ARG_EMPTY1 = "empty1";
     public static final String ARG_EMPTY2 = "empty2";
 
-    String emptyLine1;
-    String emptyLine2;
+    private String emptyLine1;
+    private String emptyLine2;
 
-    LocationRecyclerAdapter adapter;
+    private LocationRecyclerAdapter adapter;
     public ContentFragment()
     {
         //default parameter-less
-    };
+    }
 
     public ContentFragment(ContentManager content)
     {
@@ -98,7 +98,7 @@ public class ContentFragment extends Fragment implements Observer
         return myView;
     }
 
-    void updateBlocksVisibility()
+    private void updateBlocksVisibility()
     {
         emptyBlock.setVisibility(content.getContent().isEmpty()? View.VISIBLE : View.INVISIBLE);
         contentBlock.setVisibility(content.getContent().isEmpty()? View.INVISIBLE : View.VISIBLE);
@@ -108,9 +108,6 @@ public class ContentFragment extends Fragment implements Observer
     @Override
     public void update(Observable observable, Object data)
     {
-        ContentManager.UpdateTrait trait = (ContentManager.UpdateTrait) data;
-
-
         getActivity().runOnUiThread(new Runnable()
         {
             @Override

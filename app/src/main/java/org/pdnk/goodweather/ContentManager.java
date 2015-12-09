@@ -29,21 +29,21 @@ public class ContentManager extends Observable
         UPDATE,
         CLEAR,
         SELECTEDITEM
-    };
+    }
 
-    LinkedList<ILocation> content = new LinkedList<>();
+    private LinkedList<ILocation> content = new LinkedList<>();
     private int maxCount = 0;
-    private String myId;
+    private final String myId;
 
-    ILocation selectedLocation;
+    private ILocation selectedLocation;
 
-    IWeatherProvider provider;
-    Context ctx;
+    private IWeatherProvider provider;
+    private final Context ctx;
 
-    public class UpdateTrait extends Object
+    public class UpdateTrait
     {
-        public UpdateAction action;
-        public ILocation location;
+        public final UpdateAction action;
+        public final ILocation location;
 
         public UpdateTrait(UpdateAction action, ILocation location)
         {
@@ -65,7 +65,7 @@ public class ContentManager extends Observable
         this.maxCount = maxCount;
     }
 
-    void init()
+    private void init()
     {
         provider = new OkHTTPWeatherProvider(ctx);
         loadLocalData();
@@ -77,7 +77,7 @@ public class ContentManager extends Observable
         return content;
     }
 
-    public void loadLocalData()
+    private void loadLocalData()
     {
 
         try {
@@ -94,7 +94,7 @@ public class ContentManager extends Observable
 
         } catch (Exception e)
         {
-            return;
+            //don't do anything in case we can't load data
         }
     }
 
@@ -109,7 +109,7 @@ public class ContentManager extends Observable
             fos.close();
         }catch (IOException e)
         {
-            return;
+            //don't react to failure for now
         }
     }
 

@@ -7,10 +7,10 @@ import android.support.v7.widget.SearchView;
 /**
  * Created by Inflicted on 27/11/2015.
  */
-public class LocationSearchListener implements SearchView.OnQueryTextListener
+class LocationSearchListener implements SearchView.OnQueryTextListener
 {
-    ContentManager content;
-    SearchView parent;
+    private final ContentManager content;
+    private final SearchView parent;
     public LocationSearchListener(ContentManager content, SearchView sender)
     {
         this.content = content;

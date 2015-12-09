@@ -2,7 +2,6 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:background="@color/colorPrimary"
@@ -34,7 +33,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/city"
         android:layout_marginTop="40dp"
-        android:text="33C"
         android:id="@+id/temp"
         android:textSize="32sp"
         android:textStyle="bold"
@@ -48,8 +46,7 @@
         android:background="@drawable/element_image_bkg"
         android:layout_below="@id/temp"
         android:layout_marginTop="10dp"
-        android:elevation="4dp"
-        />
+        android:elevation="4dp"/>
 
 
     <TextView
@@ -60,7 +57,6 @@
         android:layout_alignTop="@id/weatherImage"
         android:layout_alignBottom="@id/weatherImage"
         android:layout_marginLeft="20dp"
-        android:text="description"
         android:id="@+id/description"
         android:textSize="22sp"
         android:textColor="@android:color/white"/>
@@ -83,7 +79,6 @@
         android:layout_alignBaseline="@id/windLabel"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
-        android:text="582597kmh"
         android:id="@+id/wind"
         android:textSize="20sp"
         android:textColor="@android:color/white"/>
@@ -106,7 +101,6 @@
         android:layout_alignBaseline="@id/humidLabel"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
-        android:text="5825%"
         android:id="@+id/humidity"
         android:textSize="20sp"
         android:textColor="@android:color/white"/>
@@ -130,7 +124,6 @@
         android:layout_alignBaseline="@id/pressureLabel"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
-        android:text="000hpa"
         android:id="@+id/pressure"
         android:textSize="20sp"
         android:textColor="@android:color/white"/>
@@ -155,7 +148,6 @@
         android:layout_alignBaseline="@id/sunriseLabel"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
-        android:text="24:00"
         android:id="@+id/sunrise"
         android:textSize="20sp"
         android:textColor="@android:color/white"/>
@@ -178,7 +170,6 @@
         android:layout_alignBaseline="@id/sunsetLabel"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
-        android:text="24:00"
         android:id="@+id/sunset"
         android:textSize="20sp"
         android:textColor="@android:color/white"/>
@@ -201,7 +192,6 @@
         android:layout_alignBaseline="@id/coordLabel"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
-        android:text="-99, 22"
         android:id="@+id/coordinates"
         android:textSize="20sp"
         android:textColor="@android:color/white"/>

@@ -26,13 +26,13 @@ import retrofit.Retrofit;
  */
 public class RetrofitWeatherProvider implements IWeatherProvider
 {
-    private Context ctx;
-    RetrofitWeatherAPI apiService;
-    final String BASE_URL = "http://api.openweathermap.org";
+    private final Context ctx;
+    private final RetrofitWeatherAPI apiService;
+    private final String BASE_URL = "http://api.openweathermap.org";
     public static final String IMAGE_URL = "http://openweathermap.org/img/w/";
-    final String APP_ID = "95d190a434083879a6398aafd54d9e73";
+    private final String APP_ID = "95d190a434083879a6398aafd54d9e73";
 
-    Retrofit retro;
+    private final Retrofit retro;
     public RetrofitWeatherProvider(Context ctx)
     {
         OkHttpClient c = new OkHttpClient();
@@ -112,7 +112,7 @@ public class RetrofitWeatherProvider implements IWeatherProvider
         return true;
     }
 
-    void handleSuccessfulResponse(Response<OpenWeatherObject> response, final ContentManager contentManager, boolean select)
+    private void handleSuccessfulResponse(Response<OpenWeatherObject> response, final ContentManager contentManager, boolean select)
     {
         OpenWeatherObject newWeatherObj = response.body();
 
@@ -128,7 +128,7 @@ public class RetrofitWeatherProvider implements IWeatherProvider
         }
     }
 
-    void showFailureMessage(final String msg)
+    private void showFailureMessage(final String msg)
     {
         ((Activity) ctx).runOnUiThread(new Runnable()
         {

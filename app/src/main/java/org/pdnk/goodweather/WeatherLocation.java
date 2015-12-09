@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 /**
  * Created by Inflicted on 27/11/2015.
  */
-public class WeatherLocation extends Object implements ILocation
+public class WeatherLocation implements ILocation
 {
     private int id;
     private String name;
@@ -100,7 +100,7 @@ public class WeatherLocation extends Object implements ILocation
         o.sunrise = f.format(d) + " UTC";
 
         d = new Date(origin.sys.sunset *1000);
-        o.sunset = f.format(d) + " UTC";;
+        o.sunset = f.format(d) + " UTC";
         return o;
     }
 
