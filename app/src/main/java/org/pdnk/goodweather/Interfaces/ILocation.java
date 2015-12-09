@@ -6,20 +6,28 @@ package org.pdnk.goodweather.Interfaces;
 public interface ILocation
 {
     int getId();
+
     String getName();
+
     String getCountryCode();
+
     String getLongitude();
+
     String getLatitude();
 
     String getTemp();
+
     String getWind();
+
     String getDescription();
 
     String getImageId();
 
     String getPressure();
+
     String getHumidity();
 
     String getSunrise();
+
     String getSunset();
 }

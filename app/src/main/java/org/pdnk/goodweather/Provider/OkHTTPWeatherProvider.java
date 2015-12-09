@@ -26,12 +26,13 @@ import java.io.IOException;
  */
 public class OkHTTPWeatherProvider implements IWeatherProvider
 {
+    public static final String IMAGE_URL = "http://openweathermap.org/img/w/";
     private final Context ctx;
     private final String BASE_URL = "http://api.openweathermap.org";
-    public static final String IMAGE_URL = "http://openweathermap.org/img/w/";
     private final String APP_ID = "95d190a434083879a6398aafd54d9e73";
 
     private final OkHttpClient okClient;
+
     public OkHTTPWeatherProvider(Context ctx)
     {
         okClient = new OkHttpClient();
@@ -40,15 +41,16 @@ public class OkHTTPWeatherProvider implements IWeatherProvider
 
         this.ctx = ctx;
     }
+
     @Override
     public boolean getLocation(ILocation oldLocation, final ContentManager contentManager)
     {
         String units = Utility.isMetric(ctx) ? ctx.getString(R.string.METRIC) : ctx.getString(R.string.IMPERIAL);
 
         final String url;
-        if(oldLocation.getId() != 0)
+        if (oldLocation.getId() != 0)
             url = String.format("%s/data/2.5/weather?id=%s&units=%s&appid=%s", BASE_URL, oldLocation.getId(), units, APP_ID);
-        else if(!oldLocation.getLongitude().isEmpty() && !oldLocation.getLatitude().isEmpty())
+        else if (!oldLocation.getLongitude().isEmpty() && !oldLocation.getLatitude().isEmpty())
             url = String.format("%s/data/2.5/weather?lat=%s&lon=%s&units=%s&appid=%s", BASE_URL, oldLocation.getLatitude(), oldLocation.getLongitude(), units, APP_ID);
         else
             url = String.format("%s/data/2.5/weather?q=%s&units=%s&appid=%s", BASE_URL, oldLocation.getName(), units, APP_ID);
@@ -80,7 +82,7 @@ public class OkHTTPWeatherProvider implements IWeatherProvider
     @Override
     public boolean updateLocation(ILocation oldLocation, final ContentManager contentManager)
     {
-        if(oldLocation.getId() == 0)
+        if (oldLocation.getId() == 0)
             return false;
 
         String units = Utility.isMetric(ctx) ? ctx.getString(R.string.METRIC) : ctx.getString(R.string.IMPERIAL);
@@ -116,13 +118,13 @@ public class OkHTTPWeatherProvider implements IWeatherProvider
 
 
         ILocation newLocation = WeatherLocation.createFromOpenWeatherObject(newWeatherObj);
-        if(newLocation == null)
+        if (newLocation == null)
         {
             showFailureMessage("Location not found or connection failure");
-        }else
+        } else
         {
             contentManager.addItem(newLocation);
-            if(select)
+            if (select)
                 contentManager.setSelectedLocation(newLocation, true);
         }
     }

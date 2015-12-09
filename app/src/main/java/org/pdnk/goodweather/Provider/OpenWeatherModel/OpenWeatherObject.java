@@ -9,12 +9,12 @@ import java.util.List;
 public class OpenWeatherObject
 {
 
+    @SerializedName("weather")
+    @Expose
+    public List<Weather> weather = new ArrayList<>();
     @SerializedName("coord")
     @Expose
     public Coord coord;
-    @SerializedName("weather")
-    @Expose
-    public final List<Weather> weather = new ArrayList<>();
     @SerializedName("base")
     @Expose
     public String base;

@@ -28,46 +28,32 @@ import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener, Observer
 {
-
     /**
      * CUSTOMISABLE OPTIONS WHICH COULD GO TO APP's SETTINGS:
      */
 
     private final static int OPT_MAX_HISTORY = 10;
     private final static boolean OPT_STORE_HISTORY_FROM_FAVOURITES = false;
-    final static boolean OPT_ENABLE_FINE_LOCATION = false;
     private final static boolean OPT_SUBMIT_GPS_SEARCH = false;
     private final static boolean OPT_AUTO_ADD_FAVOURITES = true;
+    final static boolean OPT_ENABLE_FINE_LOCATION = false;
     final static String OPT_FORCE_UNIT_SYSTEM = null;
-
 
     /**
      * END OF OPTIONS
      */
-    private ContentManager contentHistory;
-    private ContentManager contentFavourites;
-
-    private GPSManager locationGPSmgr;
-
-    enum NavigationState {
-        UNKNOWN,
-        HOME,
-        DETAILS,
-        FAVOURITES
-    }
-
     private final String FRAG_HOME = "home";
     private final String FRAG_DETAILS = "details";
     private final String FRAG_FAVOURITES = "favourites";
 
+    protected ContentManager contentHistory;
+    private ContentManager contentFavourites;
+    private GPSManager locationGPSmgr;
     private NavigationState currentNavigationState = NavigationState.UNKNOWN;
-
     private int prevBackStackCnt = 0;
-
     private View refreshBtn;
     private View favBtn;
     private android.support.v7.widget.SearchView searchView;
-
     private ILocation lastSelectedLocation;
     private boolean wasSuspended = false;
 
@@ -129,12 +115,11 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
     private void onRefreshBtnClick(View v)
     {
-        if(currentNavigationState == NavigationState.HOME)
+        if (currentNavigationState == NavigationState.HOME)
             contentHistory.updateAll();
-        else if(currentNavigationState == NavigationState.FAVOURITES)
+        else if (currentNavigationState == NavigationState.FAVOURITES)
             contentFavourites.updateAll();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -178,9 +163,9 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if(item.getItemId() == R.id.action_location)
+        if (item.getItemId() == R.id.action_location)
         {
-           // item.setEnabled(false);
+            // item.setEnabled(false);
             locationGPSmgr.requestCoordinates();
             return true;
         }
@@ -188,11 +173,10 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         return super.onOptionsItemSelected(item);
     }
 
-
     private void initToolbar()
     {
         ActionBar ab = getSupportActionBar();
-        if(ab != null)
+        if (ab != null)
         {
             ab.setDisplayShowHomeEnabled(true);
             ab.setDisplayShowTitleEnabled(false);
@@ -234,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     @Override
     protected void onResume()
     {
-        if(wasSuspended)
+        if (wasSuspended)
         {
             wasSuspended = false;
             contentHistory.updateAll();
@@ -247,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         switch (newState)
         {
             case HOME:
-                if(!preserveBackstack)
+                if (!preserveBackstack)
                 {
                     FragmentManager fm = getSupportFragmentManager();
                     fm.popBackStackImmediate(null, 0);
@@ -258,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                 navigateDetails();
                 break;
             case FAVOURITES:
-                if(currentNavigationState == NavigationState.HOME)
+                if (currentNavigationState == NavigationState.HOME)
                     navigateFavourites();
                 break;
         }
@@ -301,12 +285,11 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         b.putString(ContentFragment.ARG_TITLE, getString(R.string.recent_locations_text));
         b.putBoolean(ContentFragment.ARG_REORDER_ON_SELECT, true);
 
-        if(contentFavourites.getContent().isEmpty())
+        if (contentFavourites.getContent().isEmpty())
         {
             b.putString(ContentFragment.ARG_EMPTY1, getString(R.string.empty_line1));
             b.putString(ContentFragment.ARG_EMPTY2, getString(R.string.empty_line2));
-        }
-        else
+        } else
         {
             b.putString(ContentFragment.ARG_EMPTY1, getString(R.string.empty_search_1));
             b.putString(ContentFragment.ARG_EMPTY2, getString(R.string.empty_search_2));
@@ -336,7 +319,6 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
     }
 
-
     @Override
     public boolean onSupportNavigateUp()
     {
@@ -354,31 +336,30 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
         int currentCount = fm.getBackStackEntryCount();
 
-            if (fm.getBackStackEntryCount() > 0)
+        if (fm.getBackStackEntryCount() > 0)
+        {
+            //update state only if popping from BS
+            if (currentCount < prevBackStackCnt)
             {
-                //update state only if popping from BS
-                if(currentCount < prevBackStackCnt)
-                {
-                    FragmentManager.BackStackEntry entry = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1);
+                FragmentManager.BackStackEntry entry = fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1);
 
-                    //only explicitly set to favourites as favourites can be only on level 2,
-                    if (Objects.equals(entry.getName(), FRAG_FAVOURITES))
-                        setNavigationState(NavigationState.FAVOURITES, true);
-                }
-
-                if (ab != null)
-                {
-                    ab.setDisplayHomeAsUpEnabled(true);
-                }
+                //only explicitly set to favourites as favourites can be only on level 2,
+                if (Objects.equals(entry.getName(), FRAG_FAVOURITES))
+                    setNavigationState(NavigationState.FAVOURITES, true);
             }
-            else
+
+            if (ab != null)
             {
-                if (ab != null)
-                {
-                    ab.setDisplayHomeAsUpEnabled(false);
-                }
-                setNavigationState(NavigationState.HOME, true);
+                ab.setDisplayHomeAsUpEnabled(true);
             }
+        } else
+        {
+            if (ab != null)
+            {
+                ab.setDisplayHomeAsUpEnabled(false);
+            }
+            setNavigationState(NavigationState.HOME, true);
+        }
 
 
         prevBackStackCnt = currentCount;
@@ -389,13 +370,13 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     public void update(Observable observable, Object data)
     {
 
-        if(observable == contentHistory)
+        if (observable == contentHistory)
         {
             ContentManager.UpdateTrait trait = (ContentManager.UpdateTrait) data;
             switch (trait.action)
             {
                 case ADDEDNEW:
-                    if(trait.location != null && OPT_AUTO_ADD_FAVOURITES)
+                    if (trait.location != null && OPT_AUTO_ADD_FAVOURITES)
                         contentFavourites.addItem(trait.location);
                     break;
                 case SELECTEDITEM:
@@ -405,8 +386,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
             }
             updateButtonVisibility();
 
-        }
-        else if(observable == contentFavourites)
+        } else if (observable == contentFavourites)
         {
             ContentManager.UpdateTrait trait = (ContentManager.UpdateTrait) data;
             switch (trait.action)
@@ -419,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                     //this will also trigger the details display as per normal handling
 
                     //if option enabled, store item to history
-                    if(OPT_STORE_HISTORY_FROM_FAVOURITES)
+                    if (OPT_STORE_HISTORY_FROM_FAVOURITES)
                         contentHistory.addItem(trait.location);
 
                     contentHistory.setSelectedLocation(trait.location, true);
@@ -427,15 +407,14 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
             }
 
             updateButtonVisibility();
-        } else if(observable == locationGPSmgr)
+        } else if (observable == locationGPSmgr)
         {
             //findViewById(R.id.action_location).setEnabled(true);
 
-            if(data == null || ((String) data).isEmpty())
+            if (data == null || ((String) data).isEmpty())
             {
                 showFailureMessage("GPS provider is not available");
-            }
-            else
+            } else
             {
                 searchView.setIconified(false);
                 searchView.setQuery((String) data, OPT_SUBMIT_GPS_SEARCH);
@@ -494,5 +473,13 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
             }
         });
 
+    }
+
+    enum NavigationState
+    {
+        UNKNOWN,
+        HOME,
+        DETAILS,
+        FAVOURITES
     }
 }

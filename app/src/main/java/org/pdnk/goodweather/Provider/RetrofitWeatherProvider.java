@@ -26,13 +26,14 @@ import retrofit.Retrofit;
  */
 public class RetrofitWeatherProvider implements IWeatherProvider
 {
+    public static final String IMAGE_URL = "http://openweathermap.org/img/w/";
     private final Context ctx;
     private final RetrofitWeatherAPI apiService;
     private final String BASE_URL = "http://api.openweathermap.org";
-    public static final String IMAGE_URL = "http://openweathermap.org/img/w/";
     private final String APP_ID = "95d190a434083879a6398aafd54d9e73";
 
     private final Retrofit retro;
+
     public RetrofitWeatherProvider(Context ctx)
     {
         OkHttpClient c = new OkHttpClient();
@@ -48,9 +49,9 @@ public class RetrofitWeatherProvider implements IWeatherProvider
         apiService = retro.create(RetrofitWeatherAPI.class);
 
 
-
         this.ctx = ctx;
     }
+
     @Override
     public boolean updateLocation(ILocation oldLocation, final ContentManager contentManager)
     {
@@ -58,7 +59,7 @@ public class RetrofitWeatherProvider implements IWeatherProvider
 
         String units = Utility.isMetric(ctx) ? ctx.getString(R.string.METRIC) : ctx.getString(R.string.IMPERIAL);
 
-        if(oldLocation.getId() == 0)
+        if (oldLocation.getId() == 0)
             return false;
 
 
@@ -88,9 +89,9 @@ public class RetrofitWeatherProvider implements IWeatherProvider
 
         String units = Utility.isMetric(ctx) ? ctx.getString(R.string.METRIC) : ctx.getString(R.string.IMPERIAL);
 
-        if(oldLocation.getId() != 0)
+        if (oldLocation.getId() != 0)
             call = apiService.getById(oldLocation.getId(), units, APP_ID);
-        else if(!oldLocation.getLongitude().isEmpty() && !oldLocation.getLatitude().isEmpty())
+        else if (!oldLocation.getLongitude().isEmpty() && !oldLocation.getLatitude().isEmpty())
             call = apiService.getByCoordinates(oldLocation.getLatitude(), oldLocation.getLongitude(), units, APP_ID);
         else
             call = apiService.getName(oldLocation.getName(), units, APP_ID);
@@ -117,13 +118,13 @@ public class RetrofitWeatherProvider implements IWeatherProvider
         OpenWeatherObject newWeatherObj = response.body();
 
         ILocation newLocation = WeatherLocation.createFromOpenWeatherObject(newWeatherObj);
-        if(newLocation == null)
+        if (newLocation == null)
         {
             showFailureMessage("Location not found or connection failure");
-        }else
+        } else
         {
             contentManager.addItem(newLocation);
-            if(select)
+            if (select)
                 contentManager.setSelectedLocation(newLocation, true);
         }
     }

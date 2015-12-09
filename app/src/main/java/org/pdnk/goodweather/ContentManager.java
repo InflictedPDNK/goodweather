@@ -24,34 +24,13 @@ import java.util.Observable;
  */
 public class ContentManager extends Observable
 {
-    public enum UpdateAction {
-        ADDEDNEW,
-        UPDATE,
-        CLEAR,
-        SELECTEDITEM
-    }
-
+    private final String myId;
+    private final Context ctx;
     private LinkedList<ILocation> content = new LinkedList<>();
     private int maxCount = 0;
-    private final String myId;
-
     private ILocation selectedLocation;
 
     private IWeatherProvider provider;
-    private final Context ctx;
-
-    public class UpdateTrait
-    {
-        public final UpdateAction action;
-        public final ILocation location;
-
-        public UpdateTrait(UpdateAction action, ILocation location)
-        {
-            this.action = action;
-            this.location = location;
-        }
-    }
-
     public ContentManager(Context ctx, String myId)
     {
         this.myId = myId;
@@ -77,17 +56,20 @@ public class ContentManager extends Observable
         return content;
     }
 
-    private void loadLocalData()
+    protected void loadLocalData()
     {
 
-        try {
+        try
+        {
             FileInputStream fis = ctx.openFileInput(myId);
             FileReader r = new FileReader(fis.getFD());
             Gson gson = new GsonBuilder().create();
 
-            Type collectionType = new TypeToken<LinkedList<WeatherLocation>>(){}.getType();
+            Type collectionType = new TypeToken<LinkedList<WeatherLocation>>()
+            {
+            }.getType();
             LinkedList<ILocation> loadedList = gson.fromJson(r, collectionType);
-            if(loadedList != null)
+            if (loadedList != null)
                 content = loadedList;
 
             fis.close();
@@ -100,21 +82,21 @@ public class ContentManager extends Observable
 
     public void saveLocalData()
     {
-        try{
+        try
+        {
             FileOutputStream fos = ctx.openFileOutput(myId, Context.MODE_PRIVATE);
             FileWriter w = new FileWriter(fos.getFD());
             Gson gson = new GsonBuilder().create();
             gson.toJson(content, w);
             w.close();
             fos.close();
-        }catch (IOException e)
+        } catch (IOException e)
         {
             //don't react to failure for now
         }
     }
 
-
-    public  void createNewLocation(String incomingQuery)
+    public void createNewLocation(String incomingQuery)
     {
         ILocation newLocation = WeatherLocation.createFromSearchQuery(incomingQuery);
 
@@ -123,11 +105,11 @@ public class ContentManager extends Observable
 
     public void setSelectedLocation(ILocation location, boolean reorder)
     {
-        if(reorder)
+        if (reorder)
         {
-            for(ILocation loc : content)
+            for (ILocation loc : content)
             {
-                if(loc.getId() == location.getId())
+                if (loc.getId() == location.getId())
                 {
                     content.remove(loc);
                     content.addFirst(loc);
@@ -144,7 +126,7 @@ public class ContentManager extends Observable
 
     public void addItem(ILocation item)
     {
-        if(contains(item))
+        if (contains(item))
         {
             for (ILocation loc : content)
             {
@@ -156,7 +138,7 @@ public class ContentManager extends Observable
                     return;
                 }
             }
-        }else
+        } else
         {
             if (maxCount > 0 && content.size() > maxCount)
             {
@@ -176,15 +158,15 @@ public class ContentManager extends Observable
 
     public void updateAll()
     {
-        for(ILocation loc : content)
+        for (ILocation loc : content)
             provider.updateLocation(loc, this);
     }
 
     public boolean contains(ILocation item)
     {
-        for(ILocation loc : content)
+        for (ILocation loc : content)
         {
-            if(loc.getId() == item.getId())
+            if (loc.getId() == item.getId())
                 return true;
         }
         return false;
@@ -192,12 +174,12 @@ public class ContentManager extends Observable
 
     public void removeItem(ILocation item)
     {
-        if(selectedLocation != null && item.getId() == selectedLocation.getId())
+        if (selectedLocation != null && item.getId() == selectedLocation.getId())
             selectedLocation = null;
 
-        for(ILocation loc : content)
+        for (ILocation loc : content)
         {
-            if(loc.getId() == item.getId())
+            if (loc.getId() == item.getId())
             {
                 content.remove(loc);
                 setChanged();
@@ -215,6 +197,26 @@ public class ContentManager extends Observable
         content.clear();
         setChanged();
         notifyObservers(new UpdateTrait(UpdateAction.CLEAR, null));
+    }
+
+    public enum UpdateAction
+    {
+        ADDEDNEW,
+        UPDATE,
+        CLEAR,
+        SELECTEDITEM
+    }
+
+    public class UpdateTrait
+    {
+        public final UpdateAction action;
+        public final ILocation location;
+
+        public UpdateTrait(UpdateAction action, ILocation location)
+        {
+            this.action = action;
+            this.location = location;
+        }
     }
 
 }

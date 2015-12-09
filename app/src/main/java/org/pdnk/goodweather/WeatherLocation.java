@@ -27,7 +27,6 @@ public class WeatherLocation implements ILocation
     private String sunset;
 
 
-
     private String imageId;
 
     static ILocation createFromSearchQuery(String searchQuery)
@@ -39,7 +38,7 @@ public class WeatherLocation implements ILocation
         modifiedQuery = searchQuery.trim();
 
         //if first char is letter, perhaps it's a city name
-        if(Character.isLetter(modifiedQuery.charAt(0)))
+        if (Character.isLetter(modifiedQuery.charAt(0)))
         {
             o.name = modifiedQuery;
             return o;
@@ -49,14 +48,14 @@ public class WeatherLocation implements ILocation
         StringTokenizer tokens = new StringTokenizer(modifiedQuery, ", ");
 
         //if more than one token, it's probably coords. consider only first two
-        if(tokens.countTokens() > 1)
+        if (tokens.countTokens() > 1)
         {
             try
             {
                 o.latitude = Double.parseDouble(tokens.nextToken());
                 o.longitude = Double.parseDouble(tokens.nextToken());
-                return  o;
-            }catch (NumberFormatException e)
+                return o;
+            } catch (NumberFormatException e)
             {
                 //can't parse, probably some wrong chars there. try the last check
             }
@@ -73,7 +72,7 @@ public class WeatherLocation implements ILocation
     {
         WeatherLocation o = new WeatherLocation();
 
-        if(origin == null || origin.weather.isEmpty() || origin.id == 0)
+        if (origin == null || origin.weather.isEmpty() || origin.id == 0)
             return null;
 
         o.name = origin.name;
@@ -93,13 +92,13 @@ public class WeatherLocation implements ILocation
 
         o.id = origin.id;
 
-        Date d = new Date(origin.sys.sunrise *1000);
+        Date d = new Date(origin.sys.sunrise * 1000);
         SimpleDateFormat f = new SimpleDateFormat("HH:mm");
 
         //f.setTimeZone(TimeZone.getDefault());
         o.sunrise = f.format(d) + " UTC";
 
-        d = new Date(origin.sys.sunset *1000);
+        d = new Date(origin.sys.sunset * 1000);
         o.sunset = f.format(d) + " UTC";
         return o;
     }
@@ -126,8 +125,8 @@ public class WeatherLocation implements ILocation
     @Override
     public String getLongitude()
     {
-        if(longitude != 0.0)
-            return String.format("%.4f",longitude);
+        if (longitude != 0.0)
+            return String.format("%.4f", longitude);
 
         return "";
     }
@@ -135,8 +134,8 @@ public class WeatherLocation implements ILocation
     @Override
     public String getLatitude()
     {
-        if(latitude != 0.0)
-            return String.format("%.4f",latitude);
+        if (latitude != 0.0)
+            return String.format("%.4f", latitude);
 
         return "";
     }
@@ -144,7 +143,7 @@ public class WeatherLocation implements ILocation
     @Override
     public String getTemp()
     {
-        return String.format("%.1f",temp);
+        return String.format("%.1f", temp);
     }
 
     @Override

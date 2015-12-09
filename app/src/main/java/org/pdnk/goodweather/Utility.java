@@ -11,7 +11,7 @@ public class Utility
 {
     static public boolean isMetric(Context ctx)
     {
-        if(MainActivity.OPT_FORCE_UNIT_SYSTEM != null)
+        if (MainActivity.OPT_FORCE_UNIT_SYSTEM != null)
             return Objects.equals(MainActivity.OPT_FORCE_UNIT_SYSTEM, ctx.getString(R.string.METRIC));
 
         return Objects.equals(ctx.getString(R.string.UNITS), ctx.getString(R.string.METRIC));

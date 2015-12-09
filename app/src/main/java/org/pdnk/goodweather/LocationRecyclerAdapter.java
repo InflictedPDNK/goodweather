@@ -99,10 +99,10 @@ public class LocationRecyclerAdapter extends RecyclerView.Adapter<LocationRecycl
 
             String tempSuffix;
 
-            if(Utility.isMetric(itemView.getContext()))
+            if (Utility.isMetric(itemView.getContext()))
             {
                 tempSuffix = "°C";
-            }else
+            } else
             {
                 tempSuffix = "°F";
             }

@@ -15,6 +15,7 @@ import java.util.Observable;
 class GPSManager extends Observable implements LocationListener
 {
     private final Context ctx;
+
     public GPSManager(Context ctx)
     {
         this.ctx = ctx;
@@ -24,15 +25,13 @@ class GPSManager extends Observable implements LocationListener
     {
         LocationManager locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
 
-        if(MainActivity.OPT_ENABLE_FINE_LOCATION && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        if (MainActivity.OPT_ENABLE_FINE_LOCATION && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
         {
             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
-        }
-        else if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+        } else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
         {
             locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, ctx.getMainLooper());
-        }
-        else
+        } else
         {
             Location loc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             formLocationString(loc);
@@ -50,7 +49,7 @@ class GPSManager extends Observable implements LocationListener
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras)
     {
-        if(status != LocationProvider.AVAILABLE)
+        if (status != LocationProvider.AVAILABLE)
         {
             notifyObservers(null);
         }
@@ -70,10 +69,10 @@ class GPSManager extends Observable implements LocationListener
 
     private void formLocationString(Location loc)
     {
-        if(loc == null)
+        if (loc == null)
         {
             notifyObservers(null);
-        }else
+        } else
         {
             String formedLocationQuery = loc.getLatitude() + "," + loc.getLongitude();
             notifyObservers(formedLocationQuery);

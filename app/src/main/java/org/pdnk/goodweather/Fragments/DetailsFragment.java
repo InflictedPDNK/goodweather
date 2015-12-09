@@ -44,7 +44,6 @@ public class DetailsFragment extends Fragment implements Observer
     private ImageView image;
 
 
-
     public DetailsFragment()
     {
         // Required empty public constructor
@@ -65,14 +64,14 @@ public class DetailsFragment extends Fragment implements Observer
         View v = inflater.inflate(R.layout.fragment_details, container, false);
 
         city = ((TextView) v.findViewById(R.id.city));
-        description = ((TextView)v.findViewById(R.id.description));
-        temp = ((TextView)v.findViewById(R.id.temp));
-        wind =  ((TextView)v.findViewById(R.id.wind));
-        humidity = ((TextView)v.findViewById(R.id.humidity));
-        pressure = ((TextView)v.findViewById(R.id.pressure));
-        sunrise = ((TextView)v.findViewById(R.id.sunrise));
-        sunset = ((TextView)v.findViewById(R.id.sunset));
-        coordinates = ((TextView)v.findViewById(R.id.coordinates));
+        description = ((TextView) v.findViewById(R.id.description));
+        temp = ((TextView) v.findViewById(R.id.temp));
+        wind = ((TextView) v.findViewById(R.id.wind));
+        humidity = ((TextView) v.findViewById(R.id.humidity));
+        pressure = ((TextView) v.findViewById(R.id.pressure));
+        sunrise = ((TextView) v.findViewById(R.id.sunrise));
+        sunset = ((TextView) v.findViewById(R.id.sunset));
+        coordinates = ((TextView) v.findViewById(R.id.coordinates));
         image = (ImageView) v.findViewById(R.id.weatherImage);
 
         historyContent.addObserver(this);
@@ -100,21 +99,21 @@ public class DetailsFragment extends Fragment implements Observer
 
     private void updateFavouriteState(FloatingActionButton favBtn, boolean modify)
     {
-        if(favouriteContent.contains(locationDetails))
+        if (favouriteContent.contains(locationDetails))
         {
-            if(modify)
+            if (modify)
             {
                 favouriteContent.removeItem(locationDetails);
                 favBtn.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(android.R.color.darker_gray)));
-            }else
-                favBtn.setBackgroundTintList(originalFavBkg);        }
-        else
+            } else
+                favBtn.setBackgroundTintList(originalFavBkg);
+        } else
         {
-            if(modify)
+            if (modify)
             {
                 favouriteContent.addItem(locationDetails);
                 favBtn.setBackgroundTintList(originalFavBkg);
-            }else
+            } else
                 favBtn.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(android.R.color.darker_gray)));
         }
     }
@@ -124,11 +123,11 @@ public class DetailsFragment extends Fragment implements Observer
         String tempSuffix;
         String speedSuffix;
 
-        if(Utility.isMetric(v.getContext()))
+        if (Utility.isMetric(v.getContext()))
         {
             tempSuffix = "°C";
             speedSuffix = " m/s";
-        }else
+        } else
         {
             tempSuffix = "°F";
             speedSuffix = " M/h";
@@ -156,10 +155,10 @@ public class DetailsFragment extends Fragment implements Observer
     public void update(Observable observable, Object data)
     {
         ContentManager.UpdateTrait trait = (ContentManager.UpdateTrait) data;
-        if(trait.action == ContentManager.UpdateAction.UPDATE && trait.location != null && locationDetails.getId() == trait.location.getId())
+        if (trait.action == ContentManager.UpdateAction.UPDATE && trait.location != null && locationDetails.getId() == trait.location.getId())
         {
             locationDetails = ((ContentManager.UpdateTrait) data).location;
-            if(getView() != null)
+            if (getView() != null)
             {
                 getView().post(new Runnable()
                 {

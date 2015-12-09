@@ -21,22 +21,20 @@ import java.util.Observer;
  */
 public class ContentFragment extends Fragment implements Observer
 {
-    private ContentManager content;
-    private View clearAllBtn;
-
-    private String titleText;
-    private ViewGroup emptyBlock;
-    private ViewGroup contentBlock;
-
     public static final String ARG_TITLE = "title";
     public static final String ARG_REORDER_ON_SELECT = "reorder";
     public static final String ARG_EMPTY1 = "empty1";
     public static final String ARG_EMPTY2 = "empty2";
-
+    private ContentManager content;
+    private View clearAllBtn;
+    private String titleText;
+    private ViewGroup emptyBlock;
+    private ViewGroup contentBlock;
     private String emptyLine1;
     private String emptyLine2;
 
     private LocationRecyclerAdapter adapter;
+
     public ContentFragment()
     {
         //default parameter-less
@@ -56,7 +54,7 @@ public class ContentFragment extends Fragment implements Observer
 
         Bundle b = getArguments();
         boolean reorder = false;
-        if(b != null)
+        if (b != null)
         {
             titleText = b.getString(ARG_TITLE);
             reorder = b.getBoolean(ARG_REORDER_ON_SELECT);
@@ -100,8 +98,8 @@ public class ContentFragment extends Fragment implements Observer
 
     private void updateBlocksVisibility()
     {
-        emptyBlock.setVisibility(content.getContent().isEmpty()? View.VISIBLE : View.INVISIBLE);
-        contentBlock.setVisibility(content.getContent().isEmpty()? View.INVISIBLE : View.VISIBLE);
+        emptyBlock.setVisibility(content.getContent().isEmpty() ? View.VISIBLE : View.INVISIBLE);
+        contentBlock.setVisibility(content.getContent().isEmpty() ? View.INVISIBLE : View.VISIBLE);
     }
 
 
