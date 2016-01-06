@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.pdnk.goodweather.Interfaces.ILocation;
+import org.pdnk.goodweather.Interfaces.IManager;
 import org.pdnk.goodweather.Interfaces.IWeatherProvider;
 import org.pdnk.goodweather.Provider.OkHTTPWeatherProvider;
 
@@ -22,7 +23,7 @@ import java.util.Observable;
 /**
  * Created by Inflicted on 27/11/2015.
  */
-public class ContentManager extends Observable
+public class ContentManager extends Observable implements IManager
 {
     private final String myId;
     private final Context ctx;
@@ -31,11 +32,11 @@ public class ContentManager extends Observable
     private ILocation selectedLocation;
 
     private IWeatherProvider provider;
+
     public ContentManager(Context ctx, String myId)
     {
         this.myId = myId;
         this.ctx = ctx;
-        init();
     }
 
     public ContentManager(Context ctx, String myId, int maxCount)
@@ -44,12 +45,18 @@ public class ContentManager extends Observable
         this.maxCount = maxCount;
     }
 
-    private void init()
+    public void initialise()
     {
         provider = new OkHTTPWeatherProvider(ctx);
         loadLocalData();
         updateAll();
     }
+
+    public void cleanUp()
+    {
+        //none
+    }
+
 
     public LinkedList<ILocation> getContent()
     {

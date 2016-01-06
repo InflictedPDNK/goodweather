@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 
 import org.pdnk.goodweather.ContentManager;
 import org.pdnk.goodweather.Interfaces.ILocation;
+import org.pdnk.goodweather.ManagerFactory;
 import org.pdnk.goodweather.R;
 import org.pdnk.goodweather.Utility;
 
@@ -27,8 +28,6 @@ import java.util.Observer;
  */
 public class DetailsFragment extends Fragment implements Observer
 {
-    private ContentManager favouriteContent;
-    private ContentManager historyContent;
     private ILocation locationDetails;
     private ColorStateList originalFavBkg;
 
@@ -49,13 +48,10 @@ public class DetailsFragment extends Fragment implements Observer
         // Required empty public constructor
     }
 
-    public DetailsFragment(ILocation locationDetails, ContentManager historyContent, ContentManager favouriteContent)
+    public DetailsFragment(ILocation locationDetails)
     {
         this.locationDetails = locationDetails;
-        this.favouriteContent = favouriteContent;
-        this.historyContent = historyContent;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,8 +70,8 @@ public class DetailsFragment extends Fragment implements Observer
         coordinates = ((TextView) v.findViewById(R.id.coordinates));
         image = (ImageView) v.findViewById(R.id.weatherImage);
 
-        historyContent.addObserver(this);
-        favouriteContent.addObserver(this);
+        ManagerFactory.getHistoryMgr().addObserver(this);
+        ManagerFactory.getFavouriteManager().addObserver(this);
 
 
         updateDetails(v);
@@ -99,11 +95,11 @@ public class DetailsFragment extends Fragment implements Observer
 
     private void updateFavouriteState(FloatingActionButton favBtn, boolean modify)
     {
-        if (favouriteContent.contains(locationDetails))
+        if (ManagerFactory.getFavouriteManager().contains(locationDetails))
         {
             if (modify)
             {
-                favouriteContent.removeItem(locationDetails);
+                ManagerFactory.getFavouriteManager().removeItem(locationDetails);
                 favBtn.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(android.R.color.darker_gray)));
             } else
                 favBtn.setBackgroundTintList(originalFavBkg);
@@ -111,7 +107,7 @@ public class DetailsFragment extends Fragment implements Observer
         {
             if (modify)
             {
-                favouriteContent.addItem(locationDetails);
+                ManagerFactory.getFavouriteManager().addItem(locationDetails);
                 favBtn.setBackgroundTintList(originalFavBkg);
             } else
                 favBtn.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(android.R.color.darker_gray)));
@@ -176,8 +172,8 @@ public class DetailsFragment extends Fragment implements Observer
     @Override
     public void onDestroyView()
     {
-        historyContent.deleteObserver(this);
-        favouriteContent.deleteObserver(this);
+        ManagerFactory.getHistoryMgr().deleteObserver(this);
+        ManagerFactory.getFavouriteManager().deleteObserver(this);
         super.onDestroyView();
     }
 }

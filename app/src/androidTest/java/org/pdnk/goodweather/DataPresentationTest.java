@@ -32,6 +32,8 @@ public class DataPresentationTest extends ActivityInstrumentationTestCase2<MainA
         super.setUp();
 
         setActivityInitialTouchMode(true);
+
+        getActivity();
     }
 
 
@@ -50,7 +52,7 @@ public class DataPresentationTest extends ActivityInstrumentationTestCase2<MainA
         obj.main = new Main();
 
         ILocation loc = WeatherLocation.createFromOpenWeatherObject(obj);
-        getActivity().contentHistory.addItem(loc);
+        ManagerFactory.getHistoryMgr().addItem(loc);
 
         Thread.sleep(2000);
 
@@ -82,7 +84,7 @@ public class DataPresentationTest extends ActivityInstrumentationTestCase2<MainA
 
         assertTrue(found);
 
-        getActivity().contentHistory.removeItem(loc);
+        ManagerFactory.getHistoryMgr().removeItem(loc);
     }
 
 }

@@ -7,12 +7,14 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
 
+import org.pdnk.goodweather.Interfaces.IManager;
+
 import java.util.Observable;
 
 /**
  * Created by Inflicted on 28/11/2015.
  */
-class GPSManager extends Observable implements LocationListener
+class GPSManager extends Observable implements LocationListener, IManager
 {
     private final Context ctx;
 
@@ -21,11 +23,21 @@ class GPSManager extends Observable implements LocationListener
         this.ctx = ctx;
     }
 
+    public void initialise()
+    {
+        //none
+    }
+
+    public void cleanUp()
+    {
+        //none
+    }
+
     public void requestCoordinates()
     {
         LocationManager locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
 
-        if (MainActivity.OPT_ENABLE_FINE_LOCATION && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        if (Options.ENABLE_FINE_LOCATION && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
         {
             locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
         } else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
